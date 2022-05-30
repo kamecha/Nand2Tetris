@@ -1,0 +1,6 @@
+If you need to have openjdk first in your PATH, run:
+  echo 'export PATH="/usr/local/opt/openjdk/bin:$PATH"' >> ~/.zshrc
+
+  For compilers to find openjdk you may need to set:
+    export CPPFLAGS="-I/usr/local/opt/openjdk/include"
+

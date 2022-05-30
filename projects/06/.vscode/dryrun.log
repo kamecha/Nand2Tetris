@@ -1,0 +1,8 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory `/Users/kameyama/workspace/TechnicalBook/nand2tetris/projects/06'
+g++ -std=c++14 -c assembler.cpp parser.cpp code.cpp
+g++ -std=c++14 -c assembler.cpp parser.cpp code.cpp
+g++ -std=c++14 -c assembler.cpp parser.cpp code.cpp
+g++ -std=c++14 assembler.o parser.o code.o -o Assembler
+make: Leaving directory `/Users/kameyama/workspace/TechnicalBook/nand2tetris/projects/06'
+ 
