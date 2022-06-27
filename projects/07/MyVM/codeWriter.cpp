@@ -256,8 +256,219 @@ void constantPush(ofstream &file, int index) {
 	file << "A=M" << endl;
 	file << "M=D" << endl;
 	// SP++
+	addStackPtr(file);
+}
+
+void localPush(ofstream &file, int index) {
+	// local + index
+	file << "@LCL" << endl;
+	file << "D=M" << endl;
+	file << "@" << index << endl;
+	file << "A=D+A" << endl;
+	// D = M[local+index]
+	file << "D=M" << endl;
+	// M[SP] = D
 	file << "@SP" << endl;
-	file << "M=M+1" << endl;
+	file << "M=D" << endl;
+	// SP++
+	addStackPtr(file);
+}
+
+void argumentPush(ofstream &file, int index) {
+	// argument + index
+	file << "@ARG" << endl;
+	file << "D=M" << endl;
+	file << "@" << index << endl;
+	file << "A=D+A" << endl;
+	// D = M[argument+index]
+	file << "D=M" << endl;
+	// M[SP] = D
+	file << "@SP" << endl;
+	file << "M=D" << endl;
+	// SP++
+	addStackPtr(file);
+}
+
+void thisPush(ofstream &file, int index) {
+	// this + index
+	file << "@THIS" << endl;
+	file << "D=M" << endl;
+	file << "@" << index << endl;
+	file << "A=D+A" << endl;
+	// D = M[this+index]
+	file << "D=M" << endl;
+	// M[SP] = D
+	file << "@SP" << endl;
+	file << "M=D" << endl;
+	// SP++
+	addStackPtr(file);
+}
+
+void thatPush(ofstream &file, int index) {
+	// that + index
+	file << "@THAT" << endl;
+	file << "D=M" << endl;
+	file << "@" << index << endl;
+	file << "A=D+A" << endl;
+	// D = M[that+index]
+	file << "D=M" << endl;
+	// M[SP] = D
+	file << "@SP" << endl;
+	file << "M=D" << endl;
+	// SP++
+	addStackPtr(file);
+}
+
+// temp, index → @R(5+index)
+void tempPush(ofstream &file, int index) {
+	// temp + index
+	file << "@R5" << endl;
+	file << "D=A" << endl;
+	file << "@" << index << endl;
+	file << "A=D+A" << endl;
+	// D = M[R(5+index)]
+	file << "D=M" << endl;
+	// M[SP] = D
+	file << "@SP" << endl;
+	file << "M=D" << endl;
+	// SP++
+	addStackPtr(file);
+}
+
+void constantPop(ofstream &file, int index) {
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	// M[index]=D
+	file << "@" << index << endl;
+	file << "M=D" << endl;
+}
+
+void localPop(ofstream &file, int index) {
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	// M[R13]=D
+	file << "@R13" << endl;
+	file << "M=D" << endl;
+	// D=local+index
+	file << "@LCL" << endl;
+	file << "D=M" << endl;
+	file << "@" << index << endl;
+	file << "D=D+A" << endl;
+	// M[R14]=D
+	file << "@R14" << endl;
+	file << "M=D" << endl;
+	// M[local+index]=M[SP]
+	file << "@R13" << endl;
+	file << "D=M" << endl;
+	file << "@R14" << endl;
+	file << "A=M" << endl;
+	file << "M=D" << endl;
+}
+
+void argumentPop(ofstream &file, int index) {
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	// M[R13]=D
+	file << "@R13" << endl;
+	file << "M=D" << endl;
+	// D=argument+index
+	file << "@ARG" << endl;
+	file << "D=M" << endl;
+	file << "@" << index << endl;
+	file << "D=D+A" << endl;
+	// M[R14]=D
+	file << "@R14" << endl;
+	file << "M=D" << endl;
+	// M[argument+index]=M[SP]
+	file << "@R13" << endl;
+	file << "D=M" << endl;
+	file << "@R14" << endl;
+	file << "A=M" << endl;
+	file << "M=D" << endl;
+}
+
+void thisPop(ofstream &file, int index) {
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	// M[R13]=D
+	file << "@R13" << endl;
+	file << "M=D" << endl;
+	// D=this+index
+	file << "@THIS" << endl;
+	file << "D=M" << endl;
+	file << "@" << index << endl;
+	file << "D=D+A" << endl;
+	// M[R14]=D
+	file << "@R14" << endl;
+	file << "M=D" << endl;
+	// M[this+index]=M[SP]
+	file << "@R13" << endl;
+	file << "D=M" << endl;
+	file << "@R14" << endl;
+	file << "A=M" << endl;
+	file << "M=D" << endl;
+}
+
+void thatPop(ofstream &file, int index) {
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	// M[R13]=D
+	file << "@R13" << endl;
+	file << "M=D" << endl;
+	// D=that+index
+	file << "@THAT" << endl;
+	file << "D=M" << endl;
+	file << "@" << index << endl;
+	file << "D=D+A" << endl;
+	// M[R14]=D
+	file << "@R14" << endl;
+	file << "M=D" << endl;
+	// M[that+index]=M[SP]
+	file << "@R13" << endl;
+	file << "D=M" << endl;
+	file << "@R14" << endl;
+	file << "A=M" << endl;
+	file << "M=D" << endl;
+}
+
+void tempPop(ofstream &file, int index) {
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	// M[R13]=D
+	file << "@R13" << endl;
+	file << "M=D" << endl;
+	// D=R(5+index)
+	file << "@R5" << endl;
+	file << "D=A" << endl;
+	file << "@" << index << endl;
+	file << "D=D+A" << endl;
+	// M[R14]=D
+	file << "@R14" << endl;
+	file << "M=D" << endl;
+	// M[R(5+index)]=M[SP]
+	file << "@R13" << endl;
+	file << "D=M" << endl;
+	file << "@R14" << endl;
+	file << "A=M" << endl;
+	file << "M=D" << endl;
 }
 
 void CodeWriter::writePushPop(CommandType command, string segment, int index) {
@@ -266,10 +477,21 @@ void CodeWriter::writePushPop(CommandType command, string segment, int index) {
 		// segment[index]をスタックの上にプッシュする
 		case C_PUSH:
 			if(segment == "constant")	constantPush(file, index);
+			if(segment == "local")	localPush(file, index);
+			if(segment == "argument")	argumentPush(file, index);
+			if(segment == "this")	thisPush(file, index);
+			if(segment == "that")	thatPush(file, index);
+			if(segment == "temp")	tempPush(file, index);
 			break;
 		// pop segment index
 		// スタックの一番上のデータをポップし、それをsegment[index]に格納する
 		case C_POP:
+			if(segment == "constant")	constantPop(file, index);
+			if(segment == "local")	localPop(file, index);
+			if(segment == "argument")	argumentPop(file, index);
+			if(segment == "this")	thisPop(file, index);
+			if(segment == "that")	thatPop(file, index);
+			if(segment == "temp")	tempPop(file, index);
 			break;
 		default:
 			break;
