@@ -1,15 +1,30 @@
+#include <algorithm>
 #include <vector>
 #include <string>
 
 #include "codeWriter.h"
 
+// ../**/hoge.vm -> hoge.asm
+string makeFileName(string path) {
+	string tmp = path;
+	// mv.egoh/**...
+	reverse(tmp.begin(), tmp.end());
+	auto itr = tmp.find('/');
+	// mv.egoh
+	tmp = tmp.substr(0, itr);
+	// hoge.mv
+	reverse(tmp.begin(), tmp.end());
+	itr =  tmp.find('.');
+	// hoge.asm
+	tmp = tmp.substr(0, itr) + ".asm";
+	return tmp;
+}
+
 int main(int arg, char* argv[]) {
 	Parser parser(argv[arg-1]);
 	vector<string> args(argv, argv + arg);
-	string fileName = args[arg-1];
-	auto itr = fileName.find('.');
-	fileName = fileName.substr(0, itr) + ".asm";
-	CodeWriter code(fileName);
+	string filePath = args[arg-1];
+	CodeWriter code(makeFileName(filePath));
 	while(parser.hasMoreCommands()) {
 		parser.advance();
 		switch(parser.commandType()) {
