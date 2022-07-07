@@ -25,5 +25,10 @@ BasicTest:
 	./$(TARGET) BasicTest.vm
 	cp BasicTest.asm ../MemoryAccess/BasicTest/BasicTest.asm
 
+PointerTest: 
+	cp ../MemoryAccess/PointerTest/PointerTest.vm PointerTest.vm
+	./$(TARGET) PointerTest.vm
+	cp PointerTest.asm ../MemoryAccess/PointerTest/PointerTest.asm
+
 clean:
 	rm *.o *.asm
