@@ -248,13 +248,18 @@ void CodeWriter::writeArithmetic(string command) {
 	if(command == "not") { Not(file); }
 }
 
+// M[SP] = D
+void pushToGlobalStack(ofstream &file) {
+	file << "@SP" << endl;
+	file << "A=M" << endl;
+	file << "M=D" << endl;
+}
+
 void constantPush(ofstream &file, int index) {
 	// M[SP] = index
 	file << "@" << index << endl;
 	file << "D=A" << endl;
-	file << "@SP" << endl;
-	file << "A=M" << endl;
-	file << "M=D" << endl;
+	pushToGlobalStack(file);
 	// SP++
 	addStackPtr(file);
 }
@@ -267,9 +272,7 @@ void localPush(ofstream &file, int index) {
 	file << "A=D+A" << endl;
 	// D = M[local+index]
 	file << "D=M" << endl;
-	// M[SP] = D
-	file << "@SP" << endl;
-	file << "M=D" << endl;
+	pushToGlobalStack(file);
 	// SP++
 	addStackPtr(file);
 }
@@ -282,9 +285,7 @@ void argumentPush(ofstream &file, int index) {
 	file << "A=D+A" << endl;
 	// D = M[argument+index]
 	file << "D=M" << endl;
-	// M[SP] = D
-	file << "@SP" << endl;
-	file << "M=D" << endl;
+	pushToGlobalStack(file);
 	// SP++
 	addStackPtr(file);
 }
@@ -297,9 +298,7 @@ void thisPush(ofstream &file, int index) {
 	file << "A=D+A" << endl;
 	// D = M[this+index]
 	file << "D=M" << endl;
-	// M[SP] = D
-	file << "@SP" << endl;
-	file << "M=D" << endl;
+	pushToGlobalStack(file);
 	// SP++
 	addStackPtr(file);
 }
@@ -312,9 +311,7 @@ void thatPush(ofstream &file, int index) {
 	file << "A=D+A" << endl;
 	// D = M[that+index]
 	file << "D=M" << endl;
-	// M[SP] = D
-	file << "@SP" << endl;
-	file << "M=D" << endl;
+	pushToGlobalStack(file);
 	// SP++
 	addStackPtr(file);
 }
@@ -328,9 +325,7 @@ void tempPush(ofstream &file, int index) {
 	file << "A=D+A" << endl;
 	// D = M[R(5+index)]
 	file << "D=M" << endl;
-	// M[SP] = D
-	file << "@SP" << endl;
-	file << "M=D" << endl;
+	pushToGlobalStack(file);
 	// SP++
 	addStackPtr(file);
 }

@@ -17,6 +17,7 @@ int main(int arg, char* argv[]) {
 				code.writeArithmetic(parser.arg1());
 				break;
 			case C_PUSH:
+			case C_POP:
 				code.writePushPop(parser.commandType(), parser.arg1(), parser.arg2());
 				break;
 			default:
