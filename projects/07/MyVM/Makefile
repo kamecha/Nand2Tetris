@@ -10,6 +10,16 @@ $(TARGET):	$(OBJS)
 $(OBJS):	$(SRC)
 	$(CC) $(CFLAGS) -c $(SRC)
 
+SimpleAdd:
+	cp ../StackArithmetic/SimpleAdd/SimpleAdd.vm SimpleAdd.vm
+	./$(TARGET) SimpleAdd.vm
+	cp SimpleAdd.asm ../StackArithmetic/SimpleAdd/SimpleAdd.asm
+
+StackTest:
+	cp ../StackArithmetic/StackTest/StackTest.vm StackTest.vm
+	./$(TARGET) StackTest.vm
+	cp StackTest.asm ../StackArithmetic/StackTest/StackTest.asm
+
 BasicTest: 
 	cp ../MemoryAccess/BasicTest/BasicTest.vm BasicTest.vm
 	./$(TARGET) BasicTest.vm
