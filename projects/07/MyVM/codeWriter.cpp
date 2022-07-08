@@ -344,6 +344,15 @@ void pointerPush(ofstream &file, int index) {
 	addStackPtr(file);
 }
 
+// M[SP] = M[@Xxx.index]
+void staticPush(ofstream &file, int index, string fileNameWithoutExtension) {
+	// @Xxx.index
+	file << "@" << fileNameWithoutExtension << "." << index << endl;
+	file << "D=M" << endl;
+	pushToGlobalStack(file);
+	addStackPtr(file);
+}
+
 void constantPop(ofstream &file, int index) {
 	// SP--
 	file << "@SP" << endl;
@@ -505,6 +514,29 @@ void pointerPop(ofstream &file, int index) {
 	file << "M=D" << endl;
 }
 
+void staticPop(ofstream &file, int index, string fileNameWithoutExtension) {
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	// M[R13]=D
+	file << "@R13" << endl;
+	file << "M=D" << endl;
+	// D=@Xxx.index
+	file << "@" << fileNameWithoutExtension << "." << index << endl;
+	file << "D=A" << endl;
+	// M[R14]=D
+	file << "@R14" << endl;
+	file << "M=D" << endl;
+	// M[@xxx.index]=M[SP]
+	file << "@R13" << endl;
+	file << "D=M" << endl;
+	file << "@R14" << endl;
+	file << "A=M" << endl;
+	file << "M=D" << endl;
+}
+
 void CodeWriter::writePushPop(CommandType command, string segment, int index) {
 	switch(command) {
 		// push segment index
@@ -517,6 +549,7 @@ void CodeWriter::writePushPop(CommandType command, string segment, int index) {
 			if(segment == "that")	thatPush(file, index);
 			if(segment == "temp")	tempPush(file, index);
 			if(segment == "pointer")	pointerPush(file, index);
+			if(segment == "static")	staticPush(file, index, fileNameWithoutExtension);
 			break;
 		// pop segment index
 		// スタックの一番上のデータをポップし、それをsegment[index]に格納する
@@ -528,6 +561,7 @@ void CodeWriter::writePushPop(CommandType command, string segment, int index) {
 			if(segment == "that")	thatPop(file, index);
 			if(segment == "temp")	tempPop(file, index);
 			if(segment == "pointer")	pointerPop(file, index);
+			if(segment == "static")	staticPop(file, index, fileNameWithoutExtension);
 			break;
 		default:
 			break;

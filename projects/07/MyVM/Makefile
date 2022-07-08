@@ -30,5 +30,10 @@ PointerTest:
 	./$(TARGET) PointerTest.vm
 	cp PointerTest.asm ../MemoryAccess/PointerTest/PointerTest.asm
 
+StaticTest:
+	cp ../MemoryAccess/StaticTest/StaticTest.vm StaticTest.vm
+	./$(TARGET) StaticTest.vm
+	cp StaticTest.asm ../MemoryAccess/StaticTest/StaticTest.asm
+
 clean:
 	rm *.o *.asm
