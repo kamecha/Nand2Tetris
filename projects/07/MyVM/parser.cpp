@@ -55,6 +55,7 @@ void Parser::advance() {
 	command = lines[ptr];
 	stringstream ss(command);
 	string tmp;
+	commandSplit.clear();
 	while(getline(ss, tmp, ' ')) {
 		commandSplit.push_back(tmp);
 	}
