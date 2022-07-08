@@ -330,6 +330,20 @@ void tempPush(ofstream &file, int index) {
 	addStackPtr(file);
 }
 
+// M[SP] = M[3 + index]
+void pointerPush(ofstream &file, int index) {
+	// 3 + index
+	file << "@3" << endl;
+	file << "D=A" << endl;
+	file << "@" << index << endl;
+	file << "A=D+A" << endl;
+	// D = M[3 + index]
+	file << "D=M" << endl;
+	pushToGlobalStack(file);
+	// SP++
+	addStackPtr(file);
+}
+
 void constantPop(ofstream &file, int index) {
 	// SP--
 	file << "@SP" << endl;
@@ -466,6 +480,31 @@ void tempPop(ofstream &file, int index) {
 	file << "M=D" << endl;
 }
 
+void pointerPop(ofstream &file, int index) {
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	// M[R13]=D
+	file << "@R13" << endl;
+	file << "M=D" << endl;
+	// D=R(3+index)
+	file << "@3" << endl;
+	file << "D=A" << endl;
+	file << "@" << index << endl;
+	file << "D=D+A" << endl;
+	// M[R14]=D
+	file << "@R14" << endl;
+	file << "M=D" << endl;
+	// M[R(3+index)]=M[SP]
+	file << "@R13" << endl;
+	file << "D=M" << endl;
+	file << "@R14" << endl;
+	file << "A=M" << endl;
+	file << "M=D" << endl;
+}
+
 void CodeWriter::writePushPop(CommandType command, string segment, int index) {
 	switch(command) {
 		// push segment index
@@ -477,6 +516,7 @@ void CodeWriter::writePushPop(CommandType command, string segment, int index) {
 			if(segment == "this")	thisPush(file, index);
 			if(segment == "that")	thatPush(file, index);
 			if(segment == "temp")	tempPush(file, index);
+			if(segment == "pointer")	pointerPush(file, index);
 			break;
 		// pop segment index
 		// スタックの一番上のデータをポップし、それをsegment[index]に格納する
@@ -487,6 +527,7 @@ void CodeWriter::writePushPop(CommandType command, string segment, int index) {
 			if(segment == "this")	thisPop(file, index);
 			if(segment == "that")	thatPop(file, index);
 			if(segment == "temp")	tempPop(file, index);
+			if(segment == "pointer")	pointerPop(file, index);
 			break;
 		default:
 			break;
