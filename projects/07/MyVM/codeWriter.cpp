@@ -365,14 +365,6 @@ void constantPop(ofstream &file, int index) {
 }
 
 void localPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
 	// D=local+index
 	file << "@LCL" << endl;
 	file << "D=M" << endl;
@@ -380,6 +372,14 @@ void localPop(ofstream &file, int index) {
 	file << "D=D+A" << endl;
 	// M[R14]=D
 	file << "@R14" << endl;
+	file << "M=D" << endl;
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	// M[R13]=D
+	file << "@R13" << endl;
 	file << "M=D" << endl;
 	// M[local+index]=M[SP]
 	file << "@R13" << endl;
@@ -390,14 +390,6 @@ void localPop(ofstream &file, int index) {
 }
 
 void argumentPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
 	// D=argument+index
 	file << "@ARG" << endl;
 	file << "D=M" << endl;
@@ -405,6 +397,14 @@ void argumentPop(ofstream &file, int index) {
 	file << "D=D+A" << endl;
 	// M[R14]=D
 	file << "@R14" << endl;
+	file << "M=D" << endl;
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	// M[R13]=D
+	file << "@R13" << endl;
 	file << "M=D" << endl;
 	// M[argument+index]=M[SP]
 	file << "@R13" << endl;
@@ -415,14 +415,6 @@ void argumentPop(ofstream &file, int index) {
 }
 
 void thisPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
 	// D=this+index
 	file << "@THIS" << endl;
 	file << "D=M" << endl;
@@ -430,6 +422,14 @@ void thisPop(ofstream &file, int index) {
 	file << "D=D+A" << endl;
 	// M[R14]=D
 	file << "@R14" << endl;
+	file << "M=D" << endl;
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	// M[R13]=D
+	file << "@R13" << endl;
 	file << "M=D" << endl;
 	// M[this+index]=M[SP]
 	file << "@R13" << endl;
@@ -440,14 +440,6 @@ void thisPop(ofstream &file, int index) {
 }
 
 void thatPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
 	// D=that+index
 	file << "@THAT" << endl;
 	file << "D=M" << endl;
@@ -455,6 +447,14 @@ void thatPop(ofstream &file, int index) {
 	file << "D=D+A" << endl;
 	// M[R14]=D
 	file << "@R14" << endl;
+	file << "M=D" << endl;
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	// M[R13]=D
+	file << "@R13" << endl;
 	file << "M=D" << endl;
 	// M[that+index]=M[SP]
 	file << "@R13" << endl;
@@ -465,14 +465,6 @@ void thatPop(ofstream &file, int index) {
 }
 
 void tempPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
 	// D=R(5+index)
 	file << "@R5" << endl;
 	file << "D=A" << endl;
@@ -480,6 +472,14 @@ void tempPop(ofstream &file, int index) {
 	file << "D=D+A" << endl;
 	// M[R14]=D
 	file << "@R14" << endl;
+	file << "M=D" << endl;
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	// M[R13]=D
+	file << "@R13" << endl;
 	file << "M=D" << endl;
 	// M[R(5+index)]=M[SP]
 	file << "@R13" << endl;
@@ -490,14 +490,6 @@ void tempPop(ofstream &file, int index) {
 }
 
 void pointerPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
 	// D=R(3+index)
 	file << "@3" << endl;
 	file << "D=A" << endl;
@@ -505,6 +497,14 @@ void pointerPop(ofstream &file, int index) {
 	file << "D=D+A" << endl;
 	// M[R14]=D
 	file << "@R14" << endl;
+	file << "M=D" << endl;
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	// M[R13]=D
+	file << "@R13" << endl;
 	file << "M=D" << endl;
 	// M[R(3+index)]=M[SP]
 	file << "@R13" << endl;
@@ -515,6 +515,12 @@ void pointerPop(ofstream &file, int index) {
 }
 
 void staticPop(ofstream &file, int index, string fileNameWithoutExtension) {
+	// D=@Xxx.index
+	file << "@" << fileNameWithoutExtension << "." << index << endl;
+	file << "D=A" << endl;
+	// M[R14]=D
+	file << "@R14" << endl;
+	file << "M=D" << endl;
 	// SP--
 	file << "@SP" << endl;
 	file << "AM=M-1" << endl;
@@ -522,12 +528,6 @@ void staticPop(ofstream &file, int index, string fileNameWithoutExtension) {
 	file << "D=M" << endl;
 	// M[R13]=D
 	file << "@R13" << endl;
-	file << "M=D" << endl;
-	// D=@Xxx.index
-	file << "@" << fileNameWithoutExtension << "." << index << endl;
-	file << "D=A" << endl;
-	// M[R14]=D
-	file << "@R14" << endl;
 	file << "M=D" << endl;
 	// M[@xxx.index]=M[SP]
 	file << "@R13" << endl;
