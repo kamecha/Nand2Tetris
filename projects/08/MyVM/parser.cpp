@@ -70,18 +70,22 @@ CommandType Parser::commandType() {
 		firstCommand = command.substr(0, ptr);
 	}
 
-	if(firstCommand == "add")	return C_ARITHEMETIC;
-	if(firstCommand == "sub")	return C_ARITHEMETIC;
-	if(firstCommand == "neg")	return C_ARITHEMETIC;
-	if(firstCommand == "eq")	return C_ARITHEMETIC;
-	if(firstCommand == "gt")	return C_ARITHEMETIC;
-	if(firstCommand == "lt")	return C_ARITHEMETIC;
-	if(firstCommand == "and")	return C_ARITHEMETIC;
-	if(firstCommand == "or")	return C_ARITHEMETIC;
-	if(firstCommand == "not")	return C_ARITHEMETIC;
+	if(firstCommand == "add")		return C_ARITHEMETIC;
+	if(firstCommand == "sub")		return C_ARITHEMETIC;
+	if(firstCommand == "neg")		return C_ARITHEMETIC;
+	if(firstCommand == "eq")		return C_ARITHEMETIC;
+	if(firstCommand == "gt")		return C_ARITHEMETIC;
+	if(firstCommand == "lt")		return C_ARITHEMETIC;
+	if(firstCommand == "and")		return C_ARITHEMETIC;
+	if(firstCommand == "or")		return C_ARITHEMETIC;
+	if(firstCommand == "not")		return C_ARITHEMETIC;
 
-	if(firstCommand == "push")	return C_PUSH;
-	if(firstCommand == "pop")	return C_POP;
+	if(firstCommand == "push")		return C_PUSH;
+	if(firstCommand == "pop")		return C_POP;
+
+	if(firstCommand == "label")		return C_LABEL;
+	if(firstCommand == "goto")		return C_GOTO;
+	if(firstCommand == "if-goto")	return C_IF;
 
 	return C_NULL;
 }
