@@ -98,6 +98,9 @@ string Parser::arg1() {
 			break;
 		case C_PUSH:
 		case C_POP:
+		case C_LABEL:
+		case C_GOTO:
+		case C_IF:
 			ret = commandSplit[1];
 			break;
 		default:

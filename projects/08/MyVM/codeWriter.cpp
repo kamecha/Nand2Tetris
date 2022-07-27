@@ -567,6 +567,12 @@ void CodeWriter::writePushPop(CommandType command, string segment, int index) {
 			if(segment == "pointer")	pointerPop(file, index);
 			if(segment == "static")	staticPop(file, index, fileNameWithoutExtension);
 			break;
+		case C_LABEL:
+			break;
+		case C_GOTO:
+			break;
+		case C_IF:
+			break;
 		default:
 			break;
 	}
