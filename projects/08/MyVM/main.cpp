@@ -25,6 +25,7 @@ int main(int arg, char* argv[]) {
 	vector<string> args(argv, argv + arg);
 	string filePath = args[arg-1];
 	CodeWriter code(makeFileName(filePath));
+	code.writeInit();
 	while(parser.hasMoreCommands()) {
 		parser.advance();
 		switch(parser.commandType()) {
@@ -34,6 +35,15 @@ int main(int arg, char* argv[]) {
 			case C_PUSH:
 			case C_POP:
 				code.writePushPop(parser.commandType(), parser.arg1(), parser.arg2());
+				break;
+			case C_LABEL:
+				code.writeLabel(parser.arg1());
+				break;
+			case C_GOTO:
+				code.writeGoto(parser.arg1());
+				break;
+			case C_IF:
+				code.writeIf(parser.arg1());
 				break;
 			default:
 				break;

@@ -7,6 +7,7 @@ using namespace std;
 class CodeWriter {
 	ofstream file;
 	string fileNameWithoutExtension;
+	string functionName;
 	public:
 	//出力ファイル/ストリームを開き書き込む準備を行う
 	CodeWriter(string fileName);

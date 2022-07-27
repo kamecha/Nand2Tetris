@@ -10,30 +10,12 @@ $(TARGET):	$(OBJS)
 $(OBJS):	$(SRC)
 	$(CC) $(CFLAGS) -c $(SRC)
 
-SimpleAdd:
-	cp ../StackArithmetic/SimpleAdd/SimpleAdd.vm SimpleAdd.vm
-	./$(TARGET) SimpleAdd.vm
-	cp SimpleAdd.asm ../StackArithmetic/SimpleAdd/SimpleAdd.asm
 
-StackTest:
-	cp ../StackArithmetic/StackTest/StackTest.vm StackTest.vm
-	./$(TARGET) StackTest.vm
-	cp StackTest.asm ../StackArithmetic/StackTest/StackTest.asm
-
-BasicTest: 
-	cp ../MemoryAccess/BasicTest/BasicTest.vm BasicTest.vm
-	./$(TARGET) BasicTest.vm
-	cp BasicTest.asm ../MemoryAccess/BasicTest/BasicTest.asm
-
-PointerTest: 
-	cp ../MemoryAccess/PointerTest/PointerTest.vm PointerTest.vm
-	./$(TARGET) PointerTest.vm
-	cp PointerTest.asm ../MemoryAccess/PointerTest/PointerTest.asm
-
-StaticTest:
-	cp ../MemoryAccess/StaticTest/StaticTest.vm StaticTest.vm
-	./$(TARGET) StaticTest.vm
-	cp StaticTest.asm ../MemoryAccess/StaticTest/StaticTest.asm
+BasicLoop:
+	cp ../ProgramFlow/BasicLoop/BasicLoop.vm BasicLoop.vm
+	./$(TARGET) BasicLoop.vm
+	rm BasicLoop.vm
+	cp BasicLoop.asm ../ProgramFlow/BasicLoop/BasicLoop.asm
 
 clean:
-	rm *.o *.asm
+	rm *.o *.asm *.vm

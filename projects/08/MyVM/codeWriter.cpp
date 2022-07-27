@@ -567,15 +567,35 @@ void CodeWriter::writePushPop(CommandType command, string segment, int index) {
 			if(segment == "pointer")	pointerPop(file, index);
 			if(segment == "static")	staticPop(file, index, fileNameWithoutExtension);
 			break;
-		case C_LABEL:
-			break;
-		case C_GOTO:
-			break;
-		case C_IF:
-			break;
 		default:
 			break;
 	}
+}
+
+// 関数名$ラベル名のグローバルラベルを設定する
+void CodeWriter::writeLabel(string label) {
+	string LastLabel = functionName + "$" + label;
+	file << "(" << LastLabel << ")" << endl;
+}
+
+void CodeWriter::writeGoto(string label) {
+	string LastLabel = functionName + "$" + label;
+	file << "@" << LastLabel << endl;
+	file << "0;JMP" << endl;
+}
+
+// スタックの最上位の値をポップし0でないならばラベルへ移動する
+// 移動先は同じ関数内に限られる
+void CodeWriter:: writeIf(string label) {
+	string LastLabel = functionName + "$" + label;
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	file << "@" << LastLabel << endl;
+	// JNE = if out != 0 jump
+	file << "D;JNE" << endl;
 }
 
 void CodeWriter::close() {
