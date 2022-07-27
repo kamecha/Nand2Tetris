@@ -12,6 +12,10 @@ void CodeWriter::setFileName(string fileName) {
 	file.open(fileName, ios::out);
 }
 
+void CodeWriter::writeInit() {
+	//@SPあたりの初期化を行う
+}
+
 // hack言語を出力するようにする
 // add
 // sub
