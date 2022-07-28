@@ -3,16 +3,19 @@
 #include "codeWriter.h"
 using namespace std;
 
-CodeWriter::CodeWriter(string fileName) {
+CodeWriter::CodeWriter(string fileName)
+{
 	file.open(fileName, ios::out);
 }
 
-void CodeWriter::setFileName(string fileName) {
+void CodeWriter::setFileName(string fileName)
+{
 	CodeWriter::close();
 	file.open(fileName, ios::out);
 }
 
-void CodeWriter::writeInit() {
+void CodeWriter::writeInit()
+{
 	//@SPあたりの初期化を行う
 }
 
@@ -29,14 +32,15 @@ void CodeWriter::writeInit() {
 
 /*
 SP:		    *
-stack:	x y 
+stack:	x y
 
 SP:		*
-stack:	x y 
+stack:	x y
 R13: y
 D: x
 */
-void checkLeftRightOperands(ofstream &file) {
+void checkLeftRightOperands(ofstream &file)
+{
 	file << "@SP" << endl;
 	file << "AM=M-1" << endl;
 	// D=M[SP]	D=y
@@ -46,7 +50,7 @@ void checkLeftRightOperands(ofstream &file) {
 	file << "M=D" << endl;
 	/*
 	SP:		*
-	stack:	x y 
+	stack:	x y
 	*/
 	file << "@SP" << endl;
 	file << "AM=M-1" << endl;
@@ -55,13 +59,15 @@ void checkLeftRightOperands(ofstream &file) {
 }
 
 // SP++
-void addStackPtr(ofstream &file) {
+void addStackPtr(ofstream &file)
+{
 	file << "@SP" << endl;
 	file << "M=M+1" << endl;
 }
 
 // x+y
-void add(ofstream &file) {
+void add(ofstream &file)
+{
 	checkLeftRightOperands(file);
 	// D=R[13]+D	D=y+x
 	file << "@13" << endl;
@@ -78,7 +84,8 @@ void add(ofstream &file) {
 }
 
 // x-y
-void sub(ofstream &file) {
+void sub(ofstream &file)
+{
 	checkLeftRightOperands(file);
 	// D=D-R[13]	D=x-y
 	file << "@R13" << endl;
@@ -95,7 +102,8 @@ void sub(ofstream &file) {
 }
 
 // -y
-void neg(ofstream &file) {
+void neg(ofstream &file)
+{
 	// SP--
 	file << "@SP" << endl;
 	file << "AM=M-1" << endl;
@@ -105,7 +113,8 @@ void neg(ofstream &file) {
 }
 
 // x=y -> true
-void eq(ofstream &file) {
+void eq(ofstream &file)
+{
 	static int count = 0;
 	string eq = "EQ:";
 	string trueFlag = eq + "TRUE" + to_string(count);
@@ -137,7 +146,8 @@ void eq(ofstream &file) {
 }
 
 // x>y -> true
-void gt(ofstream &file) {
+void gt(ofstream &file)
+{
 	static int count = 0;
 	string gt = "GT:";
 	string trueFlag = gt + "TRUE" + to_string(count);
@@ -169,7 +179,8 @@ void gt(ofstream &file) {
 }
 
 // x<y -> true
-void lt(ofstream &file) {
+void lt(ofstream &file)
+{
 	static int count = 0;
 	string lt = "LT:";
 	string trueFlag = lt + "TRUE" + to_string(count);
@@ -201,7 +212,8 @@ void lt(ofstream &file) {
 }
 
 // x&y
-void And(ofstream &file) {
+void And(ofstream &file)
+{
 	checkLeftRightOperands(file);
 	// D=D&R[13]	D=x&y
 	file << "@R13" << endl;
@@ -216,7 +228,8 @@ void And(ofstream &file) {
 }
 
 // x|y
-void Or(ofstream &file) {
+void Or(ofstream &file)
+{
 	checkLeftRightOperands(file);
 	// D=D|R[13]	D=x|y
 	file << "@R13" << endl;
@@ -229,7 +242,8 @@ void Or(ofstream &file) {
 }
 
 // !y
-void Not(ofstream &file) {
+void Not(ofstream &file)
+{
 	// SP--
 	file << "@SP" << endl;
 	file << "AM=M-1" << endl;
@@ -240,26 +254,56 @@ void Not(ofstream &file) {
 	file << "M=M+1" << endl;
 }
 
-void CodeWriter::writeArithmetic(string command) {
-	if(command == "add") { add(file); }
-	if(command == "sub") { sub(file); }
-	if(command == "neg") { neg(file); }
-	if(command == "eq") { eq(file); }
-	if(command == "gt") { gt(file); }
-	if(command == "lt") { lt(file); }
-	if(command == "and") { And(file); }
-	if(command == "or") { Or(file); }
-	if(command == "not") { Not(file); }
+void CodeWriter::writeArithmetic(string command)
+{
+	if (command == "add")
+	{
+		add(file);
+	}
+	if (command == "sub")
+	{
+		sub(file);
+	}
+	if (command == "neg")
+	{
+		neg(file);
+	}
+	if (command == "eq")
+	{
+		eq(file);
+	}
+	if (command == "gt")
+	{
+		gt(file);
+	}
+	if (command == "lt")
+	{
+		lt(file);
+	}
+	if (command == "and")
+	{
+		And(file);
+	}
+	if (command == "or")
+	{
+		Or(file);
+	}
+	if (command == "not")
+	{
+		Not(file);
+	}
 }
 
 // M[SP] = D
-void pushToGlobalStack(ofstream &file) {
+void pushToGlobalStack(ofstream &file)
+{
 	file << "@SP" << endl;
 	file << "A=M" << endl;
 	file << "M=D" << endl;
 }
 
-void constantPush(ofstream &file, int index) {
+void constantPush(ofstream &file, int index)
+{
 	// M[SP] = index
 	file << "@" << index << endl;
 	file << "D=A" << endl;
@@ -268,7 +312,8 @@ void constantPush(ofstream &file, int index) {
 	addStackPtr(file);
 }
 
-void localPush(ofstream &file, int index) {
+void localPush(ofstream &file, int index)
+{
 	// local + index
 	file << "@LCL" << endl;
 	file << "D=M" << endl;
@@ -281,7 +326,8 @@ void localPush(ofstream &file, int index) {
 	addStackPtr(file);
 }
 
-void argumentPush(ofstream &file, int index) {
+void argumentPush(ofstream &file, int index)
+{
 	// argument + index
 	file << "@ARG" << endl;
 	file << "D=M" << endl;
@@ -294,7 +340,8 @@ void argumentPush(ofstream &file, int index) {
 	addStackPtr(file);
 }
 
-void thisPush(ofstream &file, int index) {
+void thisPush(ofstream &file, int index)
+{
 	// this + index
 	file << "@THIS" << endl;
 	file << "D=M" << endl;
@@ -307,7 +354,8 @@ void thisPush(ofstream &file, int index) {
 	addStackPtr(file);
 }
 
-void thatPush(ofstream &file, int index) {
+void thatPush(ofstream &file, int index)
+{
 	// that + index
 	file << "@THAT" << endl;
 	file << "D=M" << endl;
@@ -321,7 +369,8 @@ void thatPush(ofstream &file, int index) {
 }
 
 // temp, index → @R(5+index)
-void tempPush(ofstream &file, int index) {
+void tempPush(ofstream &file, int index)
+{
 	// temp + index
 	file << "@R5" << endl;
 	file << "D=A" << endl;
@@ -335,7 +384,8 @@ void tempPush(ofstream &file, int index) {
 }
 
 // M[SP] = M[3 + index]
-void pointerPush(ofstream &file, int index) {
+void pointerPush(ofstream &file, int index)
+{
 	// 3 + index
 	file << "@3" << endl;
 	file << "D=A" << endl;
@@ -349,7 +399,8 @@ void pointerPush(ofstream &file, int index) {
 }
 
 // M[SP] = M[@Xxx.index]
-void staticPush(ofstream &file, int index, string fileNameWithoutExtension) {
+void staticPush(ofstream &file, int index, string fileNameWithoutExtension)
+{
 	// @Xxx.index
 	file << "@" << fileNameWithoutExtension << "." << index << endl;
 	file << "D=M" << endl;
@@ -357,7 +408,27 @@ void staticPush(ofstream &file, int index, string fileNameWithoutExtension) {
 	addStackPtr(file);
 }
 
-void constantPop(ofstream &file, int index) {
+// M[@R14]にSPの値を代入する
+void popGlobalStackToDestination(ofstream &file)
+{
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	// M[R13]=D
+	file << "@R13" << endl;
+	file << "M=D" << endl;
+	// M[local+index]=M[SP]
+	file << "@R13" << endl;
+	file << "D=M" << endl;
+	file << "@R14" << endl;
+	file << "A=M" << endl;
+	file << "M=D" << endl;
+}
+
+void constantPop(ofstream &file, int index)
+{
 	// SP--
 	file << "@SP" << endl;
 	file << "AM=M-1" << endl;
@@ -368,15 +439,8 @@ void constantPop(ofstream &file, int index) {
 	file << "M=D" << endl;
 }
 
-void localPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
+void localPop(ofstream &file, int index)
+{
 	// D=local+index
 	file << "@LCL" << endl;
 	file << "D=M" << endl;
@@ -385,23 +449,11 @@ void localPop(ofstream &file, int index) {
 	// M[R14]=D
 	file << "@R14" << endl;
 	file << "M=D" << endl;
-	// M[local+index]=M[SP]
-	file << "@R13" << endl;
-	file << "D=M" << endl;
-	file << "@R14" << endl;
-	file << "A=M" << endl;
-	file << "M=D" << endl;
+	popGlobalStackToDestination(file);
 }
 
-void argumentPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
+void argumentPop(ofstream &file, int index)
+{
 	// D=argument+index
 	file << "@ARG" << endl;
 	file << "D=M" << endl;
@@ -410,23 +462,11 @@ void argumentPop(ofstream &file, int index) {
 	// M[R14]=D
 	file << "@R14" << endl;
 	file << "M=D" << endl;
-	// M[argument+index]=M[SP]
-	file << "@R13" << endl;
-	file << "D=M" << endl;
-	file << "@R14" << endl;
-	file << "A=M" << endl;
-	file << "M=D" << endl;
+	popGlobalStackToDestination(file);
 }
 
-void thisPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
+void thisPop(ofstream &file, int index)
+{
 	// D=this+index
 	file << "@THIS" << endl;
 	file << "D=M" << endl;
@@ -435,23 +475,11 @@ void thisPop(ofstream &file, int index) {
 	// M[R14]=D
 	file << "@R14" << endl;
 	file << "M=D" << endl;
-	// M[this+index]=M[SP]
-	file << "@R13" << endl;
-	file << "D=M" << endl;
-	file << "@R14" << endl;
-	file << "A=M" << endl;
-	file << "M=D" << endl;
+	popGlobalStackToDestination(file);
 }
 
-void thatPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
+void thatPop(ofstream &file, int index)
+{
 	// D=that+index
 	file << "@THAT" << endl;
 	file << "D=M" << endl;
@@ -460,23 +488,11 @@ void thatPop(ofstream &file, int index) {
 	// M[R14]=D
 	file << "@R14" << endl;
 	file << "M=D" << endl;
-	// M[that+index]=M[SP]
-	file << "@R13" << endl;
-	file << "D=M" << endl;
-	file << "@R14" << endl;
-	file << "A=M" << endl;
-	file << "M=D" << endl;
+	popGlobalStackToDestination(file);
 }
 
-void tempPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
+void tempPop(ofstream &file, int index)
+{
 	// D=R(5+index)
 	file << "@R5" << endl;
 	file << "D=A" << endl;
@@ -485,23 +501,11 @@ void tempPop(ofstream &file, int index) {
 	// M[R14]=D
 	file << "@R14" << endl;
 	file << "M=D" << endl;
-	// M[R(5+index)]=M[SP]
-	file << "@R13" << endl;
-	file << "D=M" << endl;
-	file << "@R14" << endl;
-	file << "A=M" << endl;
-	file << "M=D" << endl;
+	popGlobalStackToDestination(file);
 }
 
-void pointerPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
+void pointerPop(ofstream &file, int index)
+{
 	// D=R(3+index)
 	file << "@3" << endl;
 	file << "D=A" << endl;
@@ -510,75 +514,78 @@ void pointerPop(ofstream &file, int index) {
 	// M[R14]=D
 	file << "@R14" << endl;
 	file << "M=D" << endl;
-	// M[R(3+index)]=M[SP]
-	file << "@R13" << endl;
-	file << "D=M" << endl;
-	file << "@R14" << endl;
-	file << "A=M" << endl;
-	file << "M=D" << endl;
+	popGlobalStackToDestination(file);
 }
 
-void staticPop(ofstream &file, int index, string fileNameWithoutExtension) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
+void staticPop(ofstream &file, int index, string fileNameWithoutExtension)
+{
 	// D=@Xxx.index
 	file << "@" << fileNameWithoutExtension << "." << index << endl;
 	file << "D=A" << endl;
 	// M[R14]=D
 	file << "@R14" << endl;
 	file << "M=D" << endl;
-	// M[@xxx.index]=M[SP]
-	file << "@R13" << endl;
-	file << "D=M" << endl;
-	file << "@R14" << endl;
-	file << "A=M" << endl;
-	file << "M=D" << endl;
+	popGlobalStackToDestination(file);
 }
 
-void CodeWriter::writePushPop(CommandType command, string segment, int index) {
-	switch(command) {
-		// push segment index
-		// segment[index]をスタックの上にプッシュする
-		case C_PUSH:
-			if(segment == "constant")	constantPush(file, index);
-			if(segment == "local")	localPush(file, index);
-			if(segment == "argument")	argumentPush(file, index);
-			if(segment == "this")	thisPush(file, index);
-			if(segment == "that")	thatPush(file, index);
-			if(segment == "temp")	tempPush(file, index);
-			if(segment == "pointer")	pointerPush(file, index);
-			if(segment == "static")	staticPush(file, index, fileNameWithoutExtension);
-			break;
-		// pop segment index
-		// スタックの一番上のデータをポップし、それをsegment[index]に格納する
-		case C_POP:
-			if(segment == "constant")	constantPop(file, index);
-			if(segment == "local")	localPop(file, index);
-			if(segment == "argument")	argumentPop(file, index);
-			if(segment == "this")	thisPop(file, index);
-			if(segment == "that")	thatPop(file, index);
-			if(segment == "temp")	tempPop(file, index);
-			if(segment == "pointer")	pointerPop(file, index);
-			if(segment == "static")	staticPop(file, index, fileNameWithoutExtension);
-			break;
-		default:
-			break;
+void CodeWriter::writePushPop(CommandType command, string segment, int index)
+{
+	switch (command)
+	{
+	// push segment index
+	// segment[index]をスタックの上にプッシュする
+	case C_PUSH:
+		if (segment == "constant")
+			constantPush(file, index);
+		if (segment == "local")
+			localPush(file, index);
+		if (segment == "argument")
+			argumentPush(file, index);
+		if (segment == "this")
+			thisPush(file, index);
+		if (segment == "that")
+			thatPush(file, index);
+		if (segment == "temp")
+			tempPush(file, index);
+		if (segment == "pointer")
+			pointerPush(file, index);
+		if (segment == "static")
+			staticPush(file, index, fileNameWithoutExtension);
+		break;
+	// pop segment index
+	// スタックの一番上のデータをポップし、それをsegment[index]に格納する
+	case C_POP:
+		if (segment == "constant")
+			constantPop(file, index);
+		if (segment == "local")
+			localPop(file, index);
+		if (segment == "argument")
+			argumentPop(file, index);
+		if (segment == "this")
+			thisPop(file, index);
+		if (segment == "that")
+			thatPop(file, index);
+		if (segment == "temp")
+			tempPop(file, index);
+		if (segment == "pointer")
+			pointerPop(file, index);
+		if (segment == "static")
+			staticPop(file, index, fileNameWithoutExtension);
+		break;
+	default:
+		break;
 	}
 }
 
 // 関数名$ラベル名のグローバルラベルを設定する
-void CodeWriter::writeLabel(string label) {
+void CodeWriter::writeLabel(string label)
+{
 	string LastLabel = functionName + "$" + label;
 	file << "(" << LastLabel << ")" << endl;
 }
 
-void CodeWriter::writeGoto(string label) {
+void CodeWriter::writeGoto(string label)
+{
 	string LastLabel = functionName + "$" + label;
 	file << "@" << LastLabel << endl;
 	file << "0;JMP" << endl;
@@ -586,7 +593,8 @@ void CodeWriter::writeGoto(string label) {
 
 // スタックの最上位の値をポップし0でないならばラベルへ移動する
 // 移動先は同じ関数内に限られる
-void CodeWriter:: writeIf(string label) {
+void CodeWriter::writeIf(string label)
+{
 	string LastLabel = functionName + "$" + label;
 	// SP--
 	file << "@SP" << endl;
@@ -598,6 +606,7 @@ void CodeWriter:: writeIf(string label) {
 	file << "D;JNE" << endl;
 }
 
-void CodeWriter::close() {
+void CodeWriter::close()
+{
 	file.close();
 }
