@@ -353,6 +353,24 @@ void staticPush(ofstream &file, int index, string fileNameWithoutExtension) {
 	addStackPtr(file);
 }
 
+// M[@R14]にSPの値を代入する
+void popGlobalStackToDestination(ofstream &file) {
+	// SP--
+	file << "@SP" << endl;
+	file << "AM=M-1" << endl;
+	// D=M[SP]
+	file << "D=M" << endl;
+	// M[R13]=D
+	file << "@R13" << endl;
+	file << "M=D" << endl;
+	// M[local+index]=M[SP]
+	file << "@R13" << endl;
+	file << "D=M" << endl;
+	file << "@R14" << endl;
+	file << "A=M" << endl;
+	file << "M=D" << endl;
+}
+
 void constantPop(ofstream &file, int index) {
 	// SP--
 	file << "@SP" << endl;
@@ -365,14 +383,6 @@ void constantPop(ofstream &file, int index) {
 }
 
 void localPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
 	// D=local+index
 	file << "@LCL" << endl;
 	file << "D=M" << endl;
@@ -381,23 +391,10 @@ void localPop(ofstream &file, int index) {
 	// M[R14]=D
 	file << "@R14" << endl;
 	file << "M=D" << endl;
-	// M[local+index]=M[SP]
-	file << "@R13" << endl;
-	file << "D=M" << endl;
-	file << "@R14" << endl;
-	file << "A=M" << endl;
-	file << "M=D" << endl;
+	popGlobalStackToDestination(file);
 }
 
 void argumentPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
 	// D=argument+index
 	file << "@ARG" << endl;
 	file << "D=M" << endl;
@@ -406,23 +403,10 @@ void argumentPop(ofstream &file, int index) {
 	// M[R14]=D
 	file << "@R14" << endl;
 	file << "M=D" << endl;
-	// M[argument+index]=M[SP]
-	file << "@R13" << endl;
-	file << "D=M" << endl;
-	file << "@R14" << endl;
-	file << "A=M" << endl;
-	file << "M=D" << endl;
+	popGlobalStackToDestination(file);
 }
 
 void thisPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
 	// D=this+index
 	file << "@THIS" << endl;
 	file << "D=M" << endl;
@@ -431,23 +415,10 @@ void thisPop(ofstream &file, int index) {
 	// M[R14]=D
 	file << "@R14" << endl;
 	file << "M=D" << endl;
-	// M[this+index]=M[SP]
-	file << "@R13" << endl;
-	file << "D=M" << endl;
-	file << "@R14" << endl;
-	file << "A=M" << endl;
-	file << "M=D" << endl;
+	popGlobalStackToDestination(file);
 }
 
 void thatPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
 	// D=that+index
 	file << "@THAT" << endl;
 	file << "D=M" << endl;
@@ -456,23 +427,10 @@ void thatPop(ofstream &file, int index) {
 	// M[R14]=D
 	file << "@R14" << endl;
 	file << "M=D" << endl;
-	// M[that+index]=M[SP]
-	file << "@R13" << endl;
-	file << "D=M" << endl;
-	file << "@R14" << endl;
-	file << "A=M" << endl;
-	file << "M=D" << endl;
+	popGlobalStackToDestination(file);
 }
 
 void tempPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
 	// D=R(5+index)
 	file << "@R5" << endl;
 	file << "D=A" << endl;
@@ -481,23 +439,10 @@ void tempPop(ofstream &file, int index) {
 	// M[R14]=D
 	file << "@R14" << endl;
 	file << "M=D" << endl;
-	// M[R(5+index)]=M[SP]
-	file << "@R13" << endl;
-	file << "D=M" << endl;
-	file << "@R14" << endl;
-	file << "A=M" << endl;
-	file << "M=D" << endl;
+	popGlobalStackToDestination(file);
 }
 
 void pointerPop(ofstream &file, int index) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
 	// D=R(3+index)
 	file << "@3" << endl;
 	file << "D=A" << endl;
@@ -506,35 +451,17 @@ void pointerPop(ofstream &file, int index) {
 	// M[R14]=D
 	file << "@R14" << endl;
 	file << "M=D" << endl;
-	// M[R(3+index)]=M[SP]
-	file << "@R13" << endl;
-	file << "D=M" << endl;
-	file << "@R14" << endl;
-	file << "A=M" << endl;
-	file << "M=D" << endl;
+	popGlobalStackToDestination(file);
 }
 
 void staticPop(ofstream &file, int index, string fileNameWithoutExtension) {
-	// SP--
-	file << "@SP" << endl;
-	file << "AM=M-1" << endl;
-	// D=M[SP]
-	file << "D=M" << endl;
-	// M[R13]=D
-	file << "@R13" << endl;
-	file << "M=D" << endl;
 	// D=@Xxx.index
 	file << "@" << fileNameWithoutExtension << "." << index << endl;
 	file << "D=A" << endl;
 	// M[R14]=D
 	file << "@R14" << endl;
 	file << "M=D" << endl;
-	// M[@xxx.index]=M[SP]
-	file << "@R13" << endl;
-	file << "D=M" << endl;
-	file << "@R14" << endl;
-	file << "A=M" << endl;
-	file << "M=D" << endl;
+	popGlobalStackToDestination(file);
 }
 
 void CodeWriter::writePushPop(CommandType command, string segment, int index) {
