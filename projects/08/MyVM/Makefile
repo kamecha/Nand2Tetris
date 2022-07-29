@@ -17,5 +17,11 @@ BasicLoop:
 	rm BasicLoop.vm
 	cp BasicLoop.asm ../ProgramFlow/BasicLoop/BasicLoop.asm
 
+Fibonacci:
+	cp ../ProgramFlow/FibonacciSeries/FibonacciSeries.vm FibonacciSeries.vm
+	./$(TARGET) FibonacciSeries.vm
+	rm FibonacciSeries.vm
+	cp FibonacciSeries.asm ../ProgramFlow/FibonacciSeries/FibonacciSeries.asm
+
 clean:
 	rm *.o *.asm *.vm
