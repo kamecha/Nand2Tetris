@@ -23,5 +23,11 @@ Fibonacci:
 	rm FibonacciSeries.vm
 	cp FibonacciSeries.asm ../ProgramFlow/FibonacciSeries/FibonacciSeries.asm
 
+SimpleFunction:
+	cp ../FunctionCalls/SimpleFunction/SimpleFunction.vm SimpleFunction.vm
+	./$(TARGET) SimpleFunction.vm
+	rm SimpleFunction.vm
+	cp SimpleFunction.asm ../FunctionCalls/SimpleFunction/SimpleFunction.asm
+
 clean:
 	rm *.o *.asm *.vm
