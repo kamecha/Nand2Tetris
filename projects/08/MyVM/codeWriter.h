@@ -26,6 +26,10 @@ class CodeWriter {
 	void writeGoto(string label);
 	//if-gotoコマンドを行うアセンブリコードを書く
 	void writeIf(string label);
+	//functionコマンドを行うアセンブリコードを書く
+	void writeFunction(string functionName, int numLocals);
+	//returnコマンドを行うアセンブリコードを書く
+	void writeReturn();
 	//出力ファイルを閉じる
 	void close();
 };

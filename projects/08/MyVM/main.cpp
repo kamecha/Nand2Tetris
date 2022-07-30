@@ -45,6 +45,12 @@ int main(int arg, char* argv[]) {
 			case C_IF:
 				code.writeIf(parser.arg1());
 				break;
+			case C_FUNCTION:
+				code.writeFunction(parser.arg1(), parser.arg2());
+				break;
+			case C_RETURN:
+				code.writeReturn();
+				break;
 			default:
 				break;
 		}

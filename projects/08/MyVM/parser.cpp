@@ -87,6 +87,9 @@ CommandType Parser::commandType() {
 	if(firstCommand == "goto")		return C_GOTO;
 	if(firstCommand == "if-goto")	return C_IF;
 
+	if(firstCommand == "function")	return C_FUNCTION;
+	if(firstCommand == "return")	return C_RETURN;
+
 	return C_NULL;
 }
 
@@ -101,6 +104,7 @@ string Parser::arg1() {
 		case C_LABEL:
 		case C_GOTO:
 		case C_IF:
+		case C_FUNCTION:
 			ret = commandSplit[1];
 			break;
 		default:
