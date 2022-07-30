@@ -28,6 +28,9 @@ class CodeWriter {
 	void writeIf(string label);
 	//functionコマンドを行うアセンブリコードを書く
 	void writeFunction(string functionName, int numLocals);
+	//callコマンドを行うアセンブリコードを書く
+	//n個の引数がスタックにプッシュされた後に関数fが呼ばれる
+	void writeCall(string functionName, int numArgs);
 	//returnコマンドを行うアセンブリコードを書く
 	void writeReturn();
 	//出力ファイルを閉じる

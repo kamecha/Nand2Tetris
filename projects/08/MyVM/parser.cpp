@@ -105,6 +105,7 @@ string Parser::arg1() {
 		case C_GOTO:
 		case C_IF:
 		case C_FUNCTION:
+		case C_CALL:
 			ret = commandSplit[1];
 			break;
 		default:

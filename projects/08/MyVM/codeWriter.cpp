@@ -557,6 +557,63 @@ void CodeWriter::writeFunction(string functionName, int numLocals) {
 	// }
 }
 
+// push return-address
+// push LCL
+// push ARG
+// push THIS
+// push THAT
+// ARG = SP-n-5
+// LCL = SP
+// goto f
+// (return-address)
+void CodeWriter::writeCall(string functionName, int numArgs) {
+	//後で設定しておく
+	string returnAddress;
+	// push return-address
+	file << "@" << returnAddress << endl;
+	file << "D=M" << endl;
+	pushToGlobalStack(file);
+	addStackPtr(file);
+	// push LCL
+	file << "@LCL" << endl;
+	file << "D=M" << endl;
+	pushToGlobalStack(file);
+	addStackPtr(file);
+	// push ARG
+	file << "@ARG" << endl;
+	file << "D=M" << endl;
+	pushToGlobalStack(file);
+	addStackPtr(file);
+	// push THIS
+	file << "@THIS" << endl;
+	file << "D=M" << endl;
+	pushToGlobalStack(file);
+	addStackPtr(file);
+	// push THAT
+	file << "@THAT" << endl;
+	file << "D=M" << endl;
+	pushToGlobalStack(file);
+	addStackPtr(file);
+	// ARG = SP-n-5
+	file << "@SP" << endl;
+	file << "D=M" << endl;
+	for(int i = 0; i < numArgs+5; i++) {
+		file << "D=D-1" << endl;
+	}
+	file << "@ARG" << endl;
+	file << "M=D" << endl;
+	// LCL = SP
+	file << "@SP" << endl;
+	file << "D=M" << endl;
+	file << "@SP" << endl;
+	file << "M=D" << endl;
+	// goto f
+	file << "@" << functionName << endl;
+	file << "0;JMP" << endl;
+	// (return-address)
+	file << "(" << returnAddress << ")" << endl;
+}
+
 // FRAME = LCL	FRAME:一時変数
 // RET = * (FRAME-5)
 // *ARG = pop()

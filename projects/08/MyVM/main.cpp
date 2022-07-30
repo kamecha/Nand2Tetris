@@ -48,6 +48,9 @@ int main(int arg, char* argv[]) {
 			case C_FUNCTION:
 				code.writeFunction(parser.arg1(), parser.arg2());
 				break;
+			case C_CALL:
+				code.writeCall(parser.arg1(), parser.arg2());
+				break;
 			case C_RETURN:
 				code.writeReturn();
 				break;
