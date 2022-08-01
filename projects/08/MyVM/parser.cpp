@@ -87,6 +87,7 @@ CommandType Parser::commandType() {
 	if(firstCommand == "goto")		return C_GOTO;
 	if(firstCommand == "if-goto")	return C_IF;
 
+	if(firstCommand == "call")		return C_CALL;
 	if(firstCommand == "function")	return C_FUNCTION;
 	if(firstCommand == "return")	return C_RETURN;
 

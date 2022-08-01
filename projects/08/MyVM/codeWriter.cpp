@@ -1,5 +1,6 @@
 #include <fstream>
 #include <ostream>
+#include <string>
 
 #include "codeWriter.h"
 using namespace std;
@@ -12,7 +13,33 @@ void CodeWriter::setFileName(string fileName) {
 }
 
 void CodeWriter::writeInit() {
-  //@SPあたりの初期化を行う
+  //SP=256(0x0100)
+  file << "@256" << endl;
+  file << "D=A" << endl;
+  file << "@SP" << endl;
+  file << "M=D" << endl;
+  //LCL=-1
+  file << "@1" << endl;
+  file << "D=-A" << endl;
+  file << "@LCL" << endl;
+  file << "M=D" << endl;
+  //ARG=-2
+  file << "@2" << endl;
+  file << "D=-A" << endl;
+  file << "@ARG" << endl;
+  file << "M=D" << endl;
+  //THIS=-3
+  file << "@3" << endl;
+  file << "D=-A" << endl;
+  file << "@THIS" << endl;
+  file << "M=D" << endl;
+  //THAT=-4
+  file << "@4" << endl;
+  file << "D=-A" << endl;
+  file << "@THAT" << endl;
+  file << "M=D" << endl;
+  // call Sys.init
+  writeCall("Sys.init", 0);
 }
 
 // hack言語を出力するようにする
@@ -547,14 +574,11 @@ void CodeWriter::writeGoto(string label) {
 void CodeWriter::writeFunction(string functionName, int numLocals) {
 	this->functionName = functionName;
 	// functionのやつ書いておく
-	file << "(" << fileNameWithoutExtension << "." << functionName << ")" << endl;
-	// ローカル変数の分だけリピートして0で埋める
-	// for(int i = 0; i < numLocals; i++) {
-	// 	// M[SP]
-	// 	file << "D=0" << endl;
-	// 	pushToGlobalStack(file);
-	// 	addStackPtr(file);
-	// }
+	file << "(" << functionName << ")" << endl;
+	// numLocalsの分だけローカル変数を0にセットしておく
+	for(int i = 0; i < numLocals; i++) {
+		constantPush(file, 0);
+	}
 }
 
 // push return-address
@@ -567,11 +591,12 @@ void CodeWriter::writeFunction(string functionName, int numLocals) {
 // goto f
 // (return-address)
 void CodeWriter::writeCall(string functionName, int numArgs) {
+	static int num = 0;
 	//後で設定しておく
-	string returnAddress;
+	string returnAddress = functionName + "." + to_string(num++);
 	// push return-address
 	file << "@" << returnAddress << endl;
-	file << "D=M" << endl;
+	file << "D=A" << endl;
 	pushToGlobalStack(file);
 	addStackPtr(file);
 	// push LCL
@@ -605,7 +630,7 @@ void CodeWriter::writeCall(string functionName, int numArgs) {
 	// LCL = SP
 	file << "@SP" << endl;
 	file << "D=M" << endl;
-	file << "@SP" << endl;
+	file << "@LCL" << endl;
 	file << "M=D" << endl;
 	// goto f
 	file << "@" << functionName << endl;
@@ -628,6 +653,14 @@ void CodeWriter::writeReturn() {
 	file << "@LCL" << endl;
 	file << "D=M" << endl;
 	file << "@FRAME" << endl;
+	file << "M=D" << endl;
+	// RET = * (FRAME - 5)
+	file << "@FRAME" << endl;
+	file << "D=M" << endl;
+	file << "@5" << endl;
+	file << "A=D-A" << endl;
+	file << "D=M" << endl;
+	file << "@RET" << endl;
 	file << "M=D" << endl;
 	// *ARG = pop()
 	file << "@ARG" << endl;
@@ -663,12 +696,6 @@ void CodeWriter::writeReturn() {
 	file << "AM=M-1" << endl;
 	file << "D=M" << endl;
 	file << "@LCL" << endl;
-	file << "M=D" << endl;
-	// RET = * (FRAME - 5)
-	file << "@FRAME" << endl;
-	file << "AM=M-1" << endl;
-	file << "D=M" << endl;
-	file << "@RET" << endl;
 	file << "M=D" << endl;
 	// goto RET
 	file << "@RET" << endl;
