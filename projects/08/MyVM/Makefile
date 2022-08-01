@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-std=c++14 -g
+CFLAGS=-std=c++17 -g
 TARGET=VMCompiler
 SRC=main.cpp parser.cpp codeWriter.cpp
 OBJS=main.o parser.o codeWriter.o
@@ -28,6 +28,14 @@ SimpleFunction:
 	./$(TARGET) SimpleFunction.vm
 	rm SimpleFunction.vm
 	cp SimpleFunction.asm ../FunctionCalls/SimpleFunction/SimpleFunction.asm
+
+FibonacciElement:
+	./$(TARGET) ../FunctionCalls/FibonacciElement
+	cp FibonacciElement.asm ../FunctionCalls/FibonacciElement/FibonacciElement.asm
+
+NestedCall:
+	./$(TARGET) ../FunctionCalls/NestedCall/Sys.vm
+	cp Sys.asm ../FunctionCalls/NestedCall/NestedCall.asm
 
 clean:
 	rm *.o *.asm *.vm

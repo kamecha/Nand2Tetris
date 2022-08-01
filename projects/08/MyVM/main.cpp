@@ -1,31 +1,14 @@
 #include <algorithm>
+#include <fstream>
+#include <ostream>
 #include <vector>
 #include <string>
+#include <filesystem>
 
 #include "codeWriter.h"
 
-// ../**/hoge.vm -> hoge.asm
-string makeFileName(string path) {
-	string tmp = path;
-	// mv.egoh/**...
-	reverse(tmp.begin(), tmp.end());
-	auto itr = tmp.find('/');
-	// mv.egoh
-	tmp = tmp.substr(0, itr);
-	// hoge.mv
-	reverse(tmp.begin(), tmp.end());
-	itr =  tmp.find('.');
-	// hoge.asm
-	tmp = tmp.substr(0, itr) + ".asm";
-	return tmp;
-}
-
-int main(int arg, char* argv[]) {
-	Parser parser(argv[arg-1]);
-	vector<string> args(argv, argv + arg);
-	string filePath = args[arg-1];
-	CodeWriter code(makeFileName(filePath));
-	code.writeInit();
+void generateFromFolder(string path, CodeWriter &code) {
+	Parser parser(path);
 	while(parser.hasMoreCommands()) {
 		parser.advance();
 		switch(parser.commandType()) {
@@ -57,6 +40,32 @@ int main(int arg, char* argv[]) {
 			default:
 				break;
 		}
+	}
+}
+
+void generateFromDirectory(string path, CodeWriter &code) {
+	for(const filesystem::directory_entry& entry: filesystem::directory_iterator(path)) {
+		if(entry.path().extension() == ".vm") {
+			cout << ".vmが存在したよ！" << endl;
+			cout << entry.path() << endl;
+			generateFromFolder(entry.path(), code);
+		}
+	}
+}
+
+int main(int arg, char* argv[]) {
+	filesystem::path path = argv[arg-1];
+	string fileName = path.stem().string() + ".asm";
+	cout << "fileName:" << fileName << endl;
+	CodeWriter code(fileName);
+	if(filesystem::is_directory(filesystem::status(path))) {
+		cout << "direcotry" << endl;
+		code.writeInit();
+		generateFromDirectory(path, code);
+	} else {
+		code.writeInit();
+		cout << "file(path)から開いたよ" << endl;
+		generateFromFolder(path, code);
 	}
 	return 0;
 }
