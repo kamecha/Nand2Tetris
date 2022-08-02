@@ -48,6 +48,7 @@ void generateFromDirectory(string path, CodeWriter &code) {
 		if(entry.path().extension() == ".vm") {
 			cout << ".vmが存在したよ！" << endl;
 			cout << entry.path() << endl;
+			code.setFileName(entry.path());
 			generateFromFolder(entry.path(), code);
 		}
 	}

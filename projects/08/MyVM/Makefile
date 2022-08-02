@@ -37,5 +37,9 @@ NestedCall:
 	./$(TARGET) ../FunctionCalls/NestedCall/Sys.vm
 	cp Sys.asm ../FunctionCalls/NestedCall/NestedCall.asm
 
+StaticsTest:
+	./$(TARGET) ../FunctionCalls/StaticsTest
+	cp StaticsTest.asm ../FunctionCalls/StaticsTest/StaticsTest.asm
+
 clean:
 	rm *.o *.asm *.vm

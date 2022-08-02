@@ -1,6 +1,7 @@
 #include <fstream>
 #include <ostream>
 #include <string>
+#include <filesystem>
 
 #include "codeWriter.h"
 using namespace std;
@@ -8,8 +9,8 @@ using namespace std;
 CodeWriter::CodeWriter(string fileName) { file.open(fileName, ios::out); }
 
 void CodeWriter::setFileName(string fileName) {
-  CodeWriter::close();
-  file.open(fileName, ios::out);
+	filesystem::path path = fileName;
+	fileNameWithoutExtension = path.stem();
 }
 
 void CodeWriter::writeInit() {
@@ -503,6 +504,7 @@ void pointerPop(ofstream &file, int index) {
 }
 
 void staticPop(ofstream &file, int index, string fileNameWithoutExtension) {
+	file << "//### 拡張子がないファイル名は>" << fileNameWithoutExtension << "<だよ！ ####" << endl;
   // D=@Xxx.index
   file << "@" << fileNameWithoutExtension << "." << index << endl;
   file << "D=A" << endl;
