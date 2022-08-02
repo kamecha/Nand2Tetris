@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <fstream>
 #include <sstream>
 
@@ -26,6 +27,10 @@ string omitComment(string line) {
 	string::size_type ptr =  ret.find("//");
 	if(ptr != string::npos) {
 		ret = ret.substr(0, ptr);
+	}
+	auto pos = ret.find_last_not_of(" \t\v\r\n");
+	if(pos != string::npos) {
+		ret = ret.substr(0, pos+1);
 	}
 	return ret;
 }

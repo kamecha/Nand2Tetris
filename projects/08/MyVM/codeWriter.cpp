@@ -201,7 +201,7 @@ void lt(ofstream &file) {
   string trueFlag = lt + "TRUE" + to_string(count);
   string endFlag = lt + "END" + to_string(count);
   count++;
-  file << "// start eq" << endl;
+  file << "// start lt" << endl;
   checkLeftRightOperands(file);
   // D=x-y
   file << "@R13" << endl;
@@ -223,7 +223,7 @@ void lt(ofstream &file) {
   // end
   file << "(" << endFlag << ")" << endl;
   addStackPtr(file);
-  file << "// end eq" << endl;
+  file << "// end lt" << endl;
 }
 
 // x&y
