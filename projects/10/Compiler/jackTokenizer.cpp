@@ -1,4 +1,5 @@
 #include "jackTokenizer.h"
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -57,7 +58,7 @@ void debugToken(const std::vector<std::string> tokens) {
 	}
 }
 
-const std::string symbols[] = {
+const std::vector<std::string> symbols = {
 	"{", "}", "(", ")", "[", "]", ".", ",", ";","+", "-", "*", "/", "&", "|", "<", ">", "=", "~"
 };
 
@@ -103,5 +104,72 @@ JackTokenizer::JackTokenizer(std::ifstream file) {
 			}
 		}
 	}
-	debugToken(tokens);
+	// debugToken(tokens);
+	tokenIndex = -1;
+}
+
+bool JackTokenizer::hasMoreTokens() {
+	return tokenIndex + 1 < tokens.size();
+}
+
+void JackTokenizer::advance() {
+	tokenIndex++;
+}
+
+const std::vector<std::string> keywords = {
+	"class", "constructor", "function", "method", "field", "static", "var", "true", "false", "null", "this", "let", "do", "if", "else", "while", "return"
+};
+
+TokenType JackTokenizer::tokenType() {
+	std::string token = tokens[tokenIndex];
+	auto check = [](std::string token, const std::vector<std::string>& words) -> bool {
+		return std::find(words.begin(), words.end(), token) != words.end();
+	};
+	if(check(token, keywords))	return KEYWORD;
+	if(check(token, symbols))	return SYMBOL;
+	if(std::all_of(token.cbegin(), token.cend(), isdigit))	return INT_CONST;
+	if(token.front() == '"' && token.back() == '"')	return STRING_CONST;
+	return IDENTIFIER;
+}
+
+KeyWord JackTokenizer::keyWord() {
+	std::string token = tokens[tokenIndex];
+	if(token == "class")	return KEY_CLASS;
+	if(token == "constructor")	return KEY_CONSTRUCTOR;
+	if(token == "function")	return KEY_FUNCTION;
+	if(token == "method")	return KEY_METHOD;
+	if(token == "field")	return KEY_FIELD;
+	if(token == "static")	return KEY_STATIC;
+	if(token == "var")		return KEY_VAR;
+	if(token == "true")		return KEY_TRUE;
+	if(token == "false")	return KEY_FALSE;
+	if(token == "null")		return KEY_NULL;
+	if(token == "this")		return KEY_THIS;
+	if(token == "let")		return KEY_LET;
+	if(token == "do")		return KEY_DO;
+	if(token == "if")		return KEY_IF;
+	if(token == "else")		return KEY_ELSE;
+	if(token == "while")	return KEY_WHILE;
+	if(token == "return")	return KEY_RETURN;
+	// int, boolean, char のそれぞれを必要に応じて追記
+}
+
+char JackTokenizer::symbol() {
+	std::string symbol = tokens[tokenIndex];
+	return symbol.front();
+}
+
+std::string JackTokenizer::identifier() {
+	std::string identifier = tokens[tokenIndex];
+	return identifier;
+}
+
+int JackTokenizer::intVal() {
+	std::string intTmp = tokens[tokenIndex];
+	return std::stoi(intTmp);
+}
+
+std::string JackTokenizer::stringVal() {
+	std::string stringTmp = tokens[tokenIndex];
+	return stringTmp;
 }

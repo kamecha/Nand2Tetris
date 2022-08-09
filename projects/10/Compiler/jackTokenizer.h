@@ -36,8 +36,8 @@ enum KeyWord {
 };
 
 class JackTokenizer {
-	// 現在のトークン
-	std::string token;
+	// 現在のトークンへのindex
+	int tokenIndex;
 	// トークン配列
 	std::vector<std::string> tokens;
 	public:
