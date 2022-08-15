@@ -139,24 +139,30 @@ JackTokenizer::JackTokenizer(std::ifstream file) {
 		std::string beforeToken;
 		auto start = line.cbegin();
 		std::cout << "条件判定をする" << std::endl;
-		std::cout << std::regex_search(start, line.cend(), match, std::regex(R"(\S+)")) << std::endl;
-		while(std::regex_search(start, line.cend(), match, std::regex(R"(\S+)"))) {
-			start = match[0].second;
+		std::cout << std::regex_search(start, line.cend(), match, std::regex(R"((\S+)|(\*.*\*))")) << std::endl;
+		while(std::regex_search(start, line.cend(), match, std::regex(R"(".*"|\S+)"))) {
 			beforeToken = match.str();
 			std::cout << "token:\t"	<< beforeToken << std::endl;
 			if(beforeToken == "//")	break;
 			if(checkCommentStart(beforeToken)) {
 				isComment = true;
+				start = match[0].second;
 				continue;
 			}
 			if(checkCommentEnd(beforeToken)) {
 				isComment = false;
+				start = match[0].second;
 				continue;
 			}
 			if(!isComment) {
-				// ここで文字列に対応する
-				separateSymbol(beforeToken, tokens);
+				std::string::size_type firstStringPtr = beforeToken.find_first_of('"');
+				if(firstStringPtr == std::string::npos) {
+					separateSymbol(beforeToken, tokens);
+				} else {
+					tokens.push_back(beforeToken);
+				}
 			}
+			start = match[0].second;
 		}
 	}
 	tokenIndex = -1;
@@ -233,5 +239,7 @@ int JackTokenizer::intVal() {
 
 std::string JackTokenizer::stringVal() {
 	std::string stringTmp = tokens[tokenIndex];
+	stringTmp.erase(stringTmp.begin());
+	stringTmp.pop_back();
 	return stringTmp;
 }
