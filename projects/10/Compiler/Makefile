@@ -10,8 +10,18 @@ $(TARGET):	$(OBJS)
 $(OBJS):	$(SRC)
 	$(CC) $(CFLAGS) -c $(SRC)
 
+Square:
+	./$(TARGET) ../Square/Square.jack
+	./$(TARGET) ../Square/SquareGame.jack
+	./$(TARGET) ../Square/Main.jack
+
+SquareTest:
+	../../../tools/TextComparer.sh ../Square/SquareT.xml ./SquareT.xml
+	../../../tools/TextComparer.sh ../Square/SquareGameT.xml ./SquareGameT.xml
+	../../../tools/TextComparer.sh ../Square/MainT.xml ./MainT.xml
+
 ExpressionLessSquare:
 	./$(TARGET) ../ExpressionLessSquare/Square.jack
 
 clean:
-	rm *.o
+	rm *.o *.xml
