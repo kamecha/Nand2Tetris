@@ -15,13 +15,23 @@ Square:
 	./$(TARGET) ../Square/SquareGame.jack
 	./$(TARGET) ../Square/Main.jack
 
+ExpressionLessSquare:
+	./$(TARGET) ../ExpressionLessSquare/Square.jack
+
+Array:
+	./$(TARGET)	../ArrayTest/Main.jack
+
 SquareTest:
+	make Square
 	../../../tools/TextComparer.sh ../Square/SquareT.xml ./SquareT.xml
 	../../../tools/TextComparer.sh ../Square/SquareGameT.xml ./SquareGameT.xml
 	../../../tools/TextComparer.sh ../Square/MainT.xml ./MainT.xml
 
-ExpressionLessSquare:
-	./$(TARGET) ../ExpressionLessSquare/Square.jack
+ArrayTest:
+	make clean
+	make Array
+	../../../tools/TextComparer.sh ../ArrayTest/MainT.xml ./MainT.xml
 
+.PHONY: clean
 clean:
 	rm *.o *.xml
