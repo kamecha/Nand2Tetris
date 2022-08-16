@@ -140,7 +140,7 @@ JackTokenizer::JackTokenizer(std::ifstream file) {
 		auto start = line.cbegin();
 		std::cout << "条件判定をする" << std::endl;
 		std::cout << std::regex_search(start, line.cend(), match, std::regex(R"((\S+)|(\*.*\*))")) << std::endl;
-		while(std::regex_search(start, line.cend(), match, std::regex(R"(".*"|\S+)"))) {
+		while(std::regex_search(start, line.cend(), match, std::regex(R"(".*"|[^\s"]+)"))) {
 			beforeToken = match.str();
 			std::cout << "token:\t"	<< beforeToken << std::endl;
 			if(beforeToken == "//")	break;
