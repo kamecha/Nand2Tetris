@@ -400,4 +400,73 @@ statements: statement*
 statement: letStatement | ifStatement | whileStatement | doStatement | returnStatement
 */
 void CompilationEngine::compileStatements() {
+	switch(jackTokenizer.keyWord()) {
+		case KEY_LET:
+			compileLet();
+			break;
+		case KEY_IF:
+			compileIf();
+			break;
+		case KEY_WHILE:
+			compileWhile();
+			break;
+		case KEY_DO:
+			compileDo();
+			break;
+		case KEY_RETURN:
+			compileReturn();
+			break;
+		default:
+			break;
+	}
+}
+
+
+/**
+letStatement: 'let' varName ('[' expression ']')? '=' expression ';'
+*/
+void CompilationEngine::compileLet() {
+	// 'let'
+	compileKeyword();
+	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
+	// varName
+	compileIdentifier();
+	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
+	// ('[' expression ']')?
+	// TODO:後で詳細を実装する
+	if(jackTokenizer.symbol() == '[') {
+		compileSymbol();
+	}
+	// '='
+	compileSymbol();
+	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
+	// expression
+	compileExpression();
+	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
+	// ';'
+	compileSymbol();
+}
+
+/**
+ifStatement: 'if' '(' expression ')' '{' statements '}' ('else' '{' statements '}')?
+*/
+void CompilationEngine::compileIf() {
+}
+
+/**
+whileStatement: 'while' '(' expression ')' '{' statements '}'
+*/
+void CompilationEngine::compileWhile() {
+}
+
+/**
+doStatement: 'do' subroutineCall ';'
+*/
+void CompilationEngine::compileDo() {
+}
+
+/**
+returnStatement: 'return' expression? ';'
+*/
+void CompilationEngine::compileReturn() {
 }
