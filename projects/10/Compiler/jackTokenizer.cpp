@@ -180,6 +180,10 @@ void JackTokenizer::advance() {
 	tokenIndex++;
 }
 
+std::string JackTokenizer::next() {
+	return tokens[tokenIndex + 1];
+}
+
 const std::vector<std::string> keywords = {
 	"class", "constructor", "function", "method", "field", "static", "var", "int", "char", "boolean", "void", "true", "false", "null", "this", "let", "do", "if", "else", "while", "return"
 };

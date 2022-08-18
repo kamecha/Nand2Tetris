@@ -49,6 +49,9 @@ class JackTokenizer {
 	// このルーチンはhasMoreTokensがtrueの場合のみ呼び出すことができる
 	// 最初は現トークンは設定されていない
 	void advance();
+	// 次のトークンを取得し、返す
+	// 現在のトークンは変化しない
+	std::string next();
 	// 現トークンの種類を返す
 	TokenType tokenType();
 	// 現トークンのキーワードを返す
