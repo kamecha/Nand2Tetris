@@ -18,12 +18,18 @@ class CompilationEngine {
 	void compileSubroutine();
 	// パラメータのリスト(空の可能性もある)をコンパイルする。括弧()は含まない
 	void compileParameterList();
+	// サブルーチンのボディをコンパイルする
+	void compileSubroutineBody();
 	// var宣言をコンパイルする
 	void compileVarDec();
 	// keywordをコンパイルする
 	void compileKeyword();
 	// symbolをコンパイルする
 	void compileSymbol();
+	// 0~32767までの10進数の数字をコンパイルする
+	void compileIntegerConstant();
+	// ダブルクォートと改行文字を含まないユニコードの文字列をコンパイルする
+	void compileStringConstnat();
 	// identifierをコンパイルする
 	void compileIdentifier();
 	// 一連の文をコンパイルする。波カッコ{}は含まない
@@ -44,6 +50,8 @@ class CompilationEngine {
 	// termをコンパイルする
 	// 識別子の場合トークンの先読みをする必要がある
 	void compileTerm();
+	// 関数呼び出しをコンパイルする
+	void compileSubroutineCall();
 	// コンマで分離された式のリスト(空の可能性もある)をコンパイルする
 	void compileExpressionList();
 };
