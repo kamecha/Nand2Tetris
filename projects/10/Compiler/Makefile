@@ -10,27 +10,34 @@ $(TARGET):	$(OBJS)
 $(OBJS):	$(SRC)
 	$(CC) $(CFLAGS) -c $(SRC)
 
+ExpressionLessSquare:
+	./$(TARGET) ../ExpressionLessSquare/Main.jack
+	./$(TARGET) ../ExpressionLessSquare/Square.jack
+	./$(TARGET) ../ExpressionLessSquare/SquareGame.jack
+
 Square:
+	./$(TARGET) ../Square/Main.jack
 	./$(TARGET) ../Square/Square.jack
 	./$(TARGET) ../Square/SquareGame.jack
-	./$(TARGET) ../Square/Main.jack
-
-ExpressionLessSquare:
-	./$(TARGET) ../ExpressionLessSquare/Square.jack
 
 Array:
 	./$(TARGET)	../ArrayTest/Main.jack
 
+ExpressionLessSquareTest:
+	make ExpressionLessSquare
+	../../../tools/TextComparer.sh ../ExpressionLessSquare/Main.xml ./Main.xml
+	../../../tools/TextComparer.sh ../ExpressionLessSquare/Square.xml ./Square.xml
+	../../../tools/TextComparer.sh ../ExpressionLessSquare/SquareGame.xml ./SquareGame.xml
+
 SquareTest:
 	make Square
-	../../../tools/TextComparer.sh ../Square/SquareT.xml ./SquareT.xml
-	../../../tools/TextComparer.sh ../Square/SquareGameT.xml ./SquareGameT.xml
-	../../../tools/TextComparer.sh ../Square/MainT.xml ./MainT.xml
+	../../../tools/TextComparer.sh ../Square/Main.xml ./Main.xml
+	../../../tools/TextComparer.sh ../Square/Square.xml ./Square.xml
+	../../../tools/TextComparer.sh ../Square/SquareGame.xml ./SquareGame.xml
 
 ArrayTest:
-	make clean
 	make Array
-	../../../tools/TextComparer.sh ../ArrayTest/MainT.xml ./MainT.xml
+	../../../tools/TextComparer.sh ../ArrayTest/Main.xml ./Main.xml
 
 .PHONY: clean
 clean:
