@@ -761,7 +761,7 @@ subroutineCall: subroutineName '(' expressionList ')' | (className | varName) '.
 expressionList: (expression (',' expression)*)?
 */
 void CompilationEngine::compileSubroutineCall() {
-	outFile << "<subroutineCall>" << std::endl;
+	// outFile << "<subroutineCall>" << std::endl;
 	// (className | varName) '.'
 	if(jackTokenizer.hasMoreTokens() && jackTokenizer.next() == ".") {
 		compileIdentifier();
@@ -776,7 +776,7 @@ void CompilationEngine::compileSubroutineCall() {
 	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	compileExpressionList();
 	compileSymbol();
-	outFile << "</subroutineCall>" << std::endl;
+	// outFile << "</subroutineCall>" << std::endl;
 }
 
 /**
