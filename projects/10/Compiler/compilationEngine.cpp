@@ -3,15 +3,13 @@
 #include <string>
 #include <vector>
 
-CompilationEngine::CompilationEngine(std::ifstream inFile, std::ofstream outFile) {
-	this.outFile = outFile;
-	jackTokenizer = JackTokenizer(inFile);
+CompilationEngine::CompilationEngine(std::ifstream& inFile, std::ofstream& outFile) : jackTokenizer(inFile), outFile(outFile) {
 	if(jackTokenizer.hasMoreTokens())
 		jackTokenizer.advance();
 }
 
 // keyword: 'class' | 'constructor' | 'function' | 'method' | 'field' | 'static' | 'var' | 'int' | 'char' | 'boolean' | 'void' | 'true' | 'false' | 'null' | 'this' | 'let' | 'do' | 'if' | 'else' | 'while' | 'return'
-void compileKeyword() {
+void CompilationEngine::compileKeyword() {
 	switch(jackTokenizer.tokenType()) {
 		case KEYWORD:
 			outFile << "<keyword>" << " ";
@@ -136,35 +134,37 @@ void CompilationEngine::compileIdentifier() {
 */
 void CompilationEngine::compileClass() {
 	outFile << "<class>" << std::endl;
+	// 'class'
 	compileKeyword();
 	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
+	// className
 	compileIdentifier();
 	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
+	// '{'
 	compileSymbol();
-	while(jackTokenizer.hasMoreTokens()) {
-		jackTokenizer.advance();
-		switch(jackTokenizer.tokenType()) {
-			case KEYWORD:
-				switch(jackTokenizer.keyWord()) {
-					case KEY_VAR:
-						CompilationEngine::compileClassVarDec();
-						break;
-					case KEY_CONSTRUCTOR:
-					case KEY_FUNCTION:
-					case KEY_METHOD:
-						CompilationEngine::compileSubroutine();
-						break;
-					default:
-						break;
-				}
-				break;
-			case SYMBOL:
-				compileSymbol();
-				break;
-			default:
-				break;
+	// classVarDec* 
+	// ('static' | 'field') ...
+	if(jackTokenizer.hasMoreTokens()) {
+		std::string classVarDecStart = jackTokenizer.next();
+		while(classVarDecStart == "static" || classVarDecStart == "field") {
+			jackTokenizer.advance();
+			compileClassVarDec();
+			classVarDecStart = jackTokenizer.next();
 		}
 	}
+	// subroutineDec*
+	// ('constructor' | 'function' | 'method') ...
+	if(jackTokenizer.hasMoreTokens()) {
+		std::string subroutineDecStart = jackTokenizer.next();
+		while(subroutineDecStart == "constructor" || subroutineDecStart == "function" || subroutineDecStart == "method") {
+			jackTokenizer.advance();
+			compileSubroutine();
+			subroutineDecStart =  jackTokenizer.next();
+		}
+	}
+	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
+	// '}'
+	compileSymbol();
 	outFile << "</class>" << std::endl;
 }
 
@@ -193,6 +193,8 @@ void CompilationEngine::compileClassVarDec() {
 				case KEY_BOOLEAN:
 					compileKeyword();
 					break;
+				default:
+					break;
 			}
 			break;
 		case IDENTIFIER:
@@ -217,7 +219,7 @@ void CompilationEngine::compileClassVarDec() {
 				}
 				if(jackTokenizer.symbol() == ',') {
 					outFile << "<symbol>" << " , " << "</symbol>" << std::endl;
-					if(jackTokenizer.hasMoreTokens) jackTokenizer.advance();
+					if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 					compileIdentifier();
 				}
 				break;
@@ -256,6 +258,8 @@ void CompilationEngine::compileSubroutine() {
 				case KEY_CHAR:
 				case KEY_BOOLEAN:
 					compileKeyword();
+					break;
+				default:
 					break;
 			}
 			break;
@@ -314,51 +318,12 @@ void CompilationEngine::compileSubroutineBody() {
 		default:
 			break;
 	}
-	if(jackTokenizer.hasMoreTokens())	jackTokenizer.advance();
 	// varDec*
 	// varDec: 'var' type varName (',' varName)* ';'
-	while(jackTokenizer.tokenType() == KEYWORD && jackTokenizer.keyWord() == KEY_VAR) {
-		compileKeyword();
-		if(jackTokenizer.hasMoreTokens())	jackTokenizer.advance();
-		// type: 'int' | 'char' | 'boolean' | className
-		switch(jackTokenizer.tokenType()) {
-			case KEYWORD:
-				compileKeyword();
-				break;
-			case IDENTIFIER:
-				compileIdentifier();
-				break;
-			default:
-				break;
-		}
-		if(jackTokenizer.hasMoreTokens())	jackTokenizer.advance();
-		// varName
-		compileIdentifier();
-		// (',' varName)* ';'
-		bool isEnd = false;
-		while(jackTokenizer.hasMoreTokens()) {
-			jackTokenizer.advance();
-			switch(jackTokenizer.tokenType()) {
-				case SYMBOL:
-					if(jackTokenizer.symbol() == ';') {
-						outFile << "<symbol>" << " ; " << "</symbol>" << std::endl;
-						isEnd = true;
-						break;
-					}
-					if(jackTokenizer.symbol() == ',') {
-						outFile << "<symbol>" << " , " << "</symbol>" << std::endl;
-						if(jackTokenizer.hasMoreTokens) jackTokenizer.advance();
-						compileIdentifier();
-					}
-					break;
-				default:
-					break;
-			}
-			if(isEnd)
-				break;
-		}
+	while(jackTokenizer.hasMoreTokens() && jackTokenizer.next() == "var") {
+		jackTokenizer.advance();
+		compileVarDec();
 	}
-	if(jackTokenizer.hasMoreTokens())	jackTokenizer.advance();
 	// statements
 	compileStatements();
 	if(jackTokenizer.hasMoreTokens())	jackTokenizer.advance();
@@ -383,6 +348,8 @@ void CompilationEngine::compileParameterList() {
 				case KEY_BOOLEAN:
 					compileKeyword();
 					break;
+				default:
+					break;
 			}
 			break;
 		case IDENTIFIER:
@@ -392,7 +359,10 @@ void CompilationEngine::compileParameterList() {
 			flag = true;
 			break;
 	}
-	if(flag)	return;
+	if(flag) {
+		outFile << "</parameterList>" << std::endl;
+		return;
+	}
 	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	// varName
 	compileIdentifier();
@@ -416,6 +386,8 @@ void CompilationEngine::compileParameterList() {
 					case KEY_CHAR:
 					case KEY_BOOLEAN:
 						compileKeyword();
+						break;
+					default:
 						break;
 				}
 				break;
@@ -466,6 +438,9 @@ void CompilationEngine::compileVarDec() {
 		default:
 			break;
 	}
+	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
+	// varName
+	compileIdentifier();
 	// (',' varName)*
 	while(jackTokenizer.hasMoreTokens() && jackTokenizer.next() == ",") {
 		jackTokenizer.advance();
@@ -487,29 +462,32 @@ statement: letStatement | ifStatement | whileStatement | doStatement | returnSta
 */
 void CompilationEngine::compileStatements() {
 	outFile << "<statements>" << std::endl;
-	switch(jackTokenizer.keyWord()) {
-		case KEY_LET:
-			compileLet();
-			if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
-			break;
-		case KEY_IF:
-			compileIf();
-			if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
-			break;
-		case KEY_WHILE:
-			compileWhile();
-			if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
-			break;
-		case KEY_DO:
-			compileDo();
-			if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
-			break;
-		case KEY_RETURN:
-			compileReturn();
-			if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
-			break;
-		default:
-			break;
+	while(jackTokenizer.hasMoreTokens() 
+		&& (	jackTokenizer.next() == "let"
+		||	jackTokenizer.next() == "if"
+		||	jackTokenizer.next() ==  "while"
+		||	jackTokenizer.next() == "do"
+		||	jackTokenizer.next() == "return")) {
+		jackTokenizer.advance();
+		switch(jackTokenizer.keyWord()) {
+			case KEY_LET:
+				compileLet();
+				break;
+			case KEY_IF:
+				compileIf();
+				break;
+			case KEY_WHILE:
+				compileWhile();
+				break;
+			case KEY_DO:
+				compileDo();
+				break;
+			case KEY_RETURN:
+				compileReturn();
+				break;
+			default:
+				break;
+		}
 	}
 	outFile << "</statements>" << std::endl;
 }
@@ -575,16 +553,16 @@ void CompilationEngine::compileIf() {
 	if(jackTokenizer.tokenType() == SYMBOL)
 		compileSymbol();
 	// ('else' '{' statements '}')?
-	if(jackTokenizer.tokenType() == KEYWORD && jackTokenizer.next() == "else") {
+	if(jackTokenizer.hasMoreTokens() && jackTokenizer.next() == "else") {
 		jackTokenizer.advance();
 		// 'else'
 		compileKeyword();
 		if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 		// '{'
 		compileSymbol();
-		if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 		// statements
 		compileStatements();
+		if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 		// '}'
 		compileSymbol();
 	}
@@ -655,11 +633,12 @@ void CompilationEngine::compileReturn() {
 		default:
 			break;
 	}
-	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	// expression? ';'
 	if(jackTokenizer.hasMoreTokens() && jackTokenizer.next() == ";") {
+		jackTokenizer.advance();
 		compileSymbol();
 	} else {
+		jackTokenizer.advance();
 		compileExpression();
 		if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 		compileSymbol();
@@ -686,7 +665,7 @@ void CompilationEngine::compileExpression() {
 		return ret;
 	}();
 	// (op term)*
-	while(jackTokenizer.hasMoreTokens() && jackTokenizer.next().find_first_of(op)) {
+	while(jackTokenizer.hasMoreTokens() && jackTokenizer.next().find_first_of(op) != std::string::npos) {
 		jackTokenizer.advance();
 		// op
 		compileSymbol();
@@ -726,14 +705,14 @@ void CompilationEngine::compileTerm() {
 			break;
 		case IDENTIFIER:
 			if(jackTokenizer.hasMoreTokens()) {
-				switch(jackTokenizer.next()) {
+				switch(jackTokenizer.next()[0]) {
 					// subroutineCall: subroutineName '(' expressionList ')' | (className | varName) '.' subroutineName '(' expressionList ')'
-					case "(":
-					case ".":
+					case '(':
+					case '.':
 						compileSubroutineCall();
 						break;
 					// varName '[' expression ']'
-					case "[":
+					case '[':
 						compileIdentifier();
 						if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 						// '['
@@ -761,7 +740,7 @@ void CompilationEngine::compileTerm() {
 					if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 					compileExpression();
 					if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
-					compileSymbol()
+					compileSymbol();
 					break;
 				case '-':
 				case '~':

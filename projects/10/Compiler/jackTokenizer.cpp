@@ -94,7 +94,7 @@ void separateSymbol(std::string beforeToken, std::vector<std::string>& tokens) {
 		if(foundPtr == std::string::npos) {
 			token = beforeToken.substr(ptr, beforeToken.size() - ptr);
 			if(!token.empty()) {
-				std::cout << "push token:\t" << token << std::endl;
+				// std::cout << "push token:\t" << token << std::endl;
 				tokens.push_back(token);
 			}
 			break;
@@ -103,20 +103,20 @@ void separateSymbol(std::string beforeToken, std::vector<std::string>& tokens) {
 		if(ptr != foundPtr)
 			token = beforeToken.substr(ptr, foundPtr - ptr);
 		if(!token.empty()) {
-			std::cout << "push token:\t" << token << std::endl;
+			// std::cout << "push token:\t" << token << std::endl;
 			tokens.push_back(token);
 		}
 		// symbol
 		token = beforeToken.substr(foundPtr, 1);
 		if(!token.empty()) {
-			std::cout << "push token:\t" << token << std::endl;
+			// std::cout << "push token:\t" << token << std::endl;
 			tokens.push_back(token);
 		}
 		ptr = foundPtr + 1;
 	}
 }
 
-JackTokenizer::JackTokenizer(std::ifstream file) {
+JackTokenizer::JackTokenizer(std::ifstream& file) {
 	// 入力ファイル1行分
 	std::string line;
 	// コメントかどうか
@@ -124,8 +124,8 @@ JackTokenizer::JackTokenizer(std::ifstream file) {
 	// 文字列かどうか
 	bool isString = false;
 	while(std::getline(file, line)) {
-		std::cout << "これを今からトークン化していくよ" << std::endl;
-		std::cout << line << std::endl;
+		// std::cout << "これを今からトークン化していくよ" << std::endl;
+		// std::cout << line << std::endl;
 
 		// キャリッジリターン(\n\r)対策
 		if(!line.empty() && line.back() == '\r') {
@@ -138,11 +138,11 @@ JackTokenizer::JackTokenizer(std::ifstream file) {
 		std::smatch match;
 		std::string beforeToken;
 		auto start = line.cbegin();
-		std::cout << "条件判定をする" << std::endl;
-		std::cout << std::regex_search(start, line.cend(), match, std::regex(R"((\S+)|(\*.*\*))")) << std::endl;
+		// std::cout << "条件判定をする" << std::endl;
+		// std::cout << std::regex_search(start, line.cend(), match, std::regex(R"((\S+)|(\*.*\*))")) << std::endl;
 		while(std::regex_search(start, line.cend(), match, std::regex(R"(".*"|[^\s"]+)"))) {
 			beforeToken = match.str();
-			std::cout << "token:\t"	<< beforeToken << std::endl;
+			// std::cout << "token:\t"	<< beforeToken << std::endl;
 			if(beforeToken == "//")	break;
 			if(checkCommentStart(beforeToken)) {
 				isComment = true;
@@ -166,9 +166,9 @@ JackTokenizer::JackTokenizer(std::ifstream file) {
 		}
 	}
 	tokenIndex = -1;
-	std::cout << "############################### トークナイザの確認 ###############################" << std::endl;
+	// std::cout << "############################### トークナイザの確認 ###############################" << std::endl;
 	for(std::string token: tokens) {
-		std::cout << token << std::endl;
+		// std::cout << token << std::endl;
 	}
 }
 

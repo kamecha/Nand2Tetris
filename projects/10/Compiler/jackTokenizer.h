@@ -42,7 +42,7 @@ class JackTokenizer {
 	std::vector<std::string> tokens;
 	public:
 	// 入力ファイル/ストリームを開き、トークン化を行う準備をする
-	JackTokenizer(std::ifstream file);
+	JackTokenizer(std::ifstream& file);
 	// 入力にまだトークンは存在するか？
 	bool hasMoreTokens();
 	// 入力から次のトークンを取得し、それを現在のトークンとする
