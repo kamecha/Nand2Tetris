@@ -12,21 +12,21 @@ $(OBJS):	$(SRC)
 
 ExpressionLessSquare:
 	make $(TARGET)
-	make clean
+	rm *.o
 	./$(TARGET) ../ExpressionLessSquare/Main.jack
 	./$(TARGET) ../ExpressionLessSquare/Square.jack
 	./$(TARGET) ../ExpressionLessSquare/SquareGame.jack
 
 Square:
 	make $(TARGET)
-	make clean
+	rm *.o
 	./$(TARGET) ../Square/Main.jack
 	./$(TARGET) ../Square/Square.jack
 	./$(TARGET) ../Square/SquareGame.jack
 
 Array:
 	make $(TARGET)
-	make clean
+	rm *.o
 	./$(TARGET)	../ArrayTest/Main.jack
 
 ExpressionLessSquareTest:
