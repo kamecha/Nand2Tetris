@@ -91,7 +91,20 @@ void CompilationEngine::compileKeyword() {
 void CompilationEngine::compileSymbol() {
 	switch(jackTokenizer.tokenType()) {
 		case SYMBOL:
-			outFile << "<symbol>" << " " << jackTokenizer.symbol() << " " << "</symbol>" << std::endl;
+			switch(jackTokenizer.symbol()) {
+				case '<':
+					outFile << "<symbol>" << " " << "&lt;" << " " << "</symbol>" << std::endl;
+					break;
+				case '>':
+					outFile << "<symbol>" << " " << "&gt;" << " " << "</symbol>" << std::endl;
+					break;
+				case '&':
+					outFile << "<symbol>" << " " << "&amp;" << " " << "</symbol>" << std::endl;
+					break;
+				default:
+					outFile << "<symbol>" << " " << jackTokenizer.symbol() << " " << "</symbol>" << std::endl;
+					break;
+			}
 			break;
 		default:
 			break;
@@ -508,10 +521,14 @@ void CompilationEngine::compileLet() {
 	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	// ('[' expression ']')?
 	if(jackTokenizer.symbol() == '[') {
+		// '['
 		compileSymbol();
 		if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 		compileExpression();
+		if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
+		// ']'
 		compileSymbol();
+		if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	}
 	// '='
 	compileSymbol();
@@ -812,6 +829,9 @@ void CompilationEngine::compileExpressionList() {
 				case '-':
 				case '~':
 					compileSymbol();
+					break;
+				case '(':
+					compileExpression();
 					break;
 				default:
 					isExist = false;
