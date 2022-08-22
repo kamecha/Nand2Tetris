@@ -237,7 +237,7 @@ std::string JackTokenizer::identifier() {
 
 int JackTokenizer::intVal() {
 	std::string intTmp = tokens[tokenIndex];
-	std::cout << "これをintにしようとしてエラーが出たよ" << ">" << intTmp << "<" << std::endl;
+	// std::cout << "これをintにしようとしてエラーが出たよ" << ">" << intTmp << "<" << std::endl;
 	return std::stoi(intTmp);
 }
 
