@@ -243,6 +243,7 @@ void CompilationEngine::compileSubroutine() {
 	switch(jackTokenizer.keyWord()) {
 		case KEY_CONSTRUCTOR:
 		case KEY_FUNCTION:
+		case KEY_METHOD:
 			compileKeyword();
 			break;
 		default:
@@ -401,6 +402,7 @@ void CompilationEngine::compileParameterList() {
 		// varName
 		compileIdentifier();
 	}
+	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	outFile << "</parameterList>" << std::endl;
 }
 
@@ -546,12 +548,11 @@ void CompilationEngine::compileIf() {
 	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	// '{'
 	compileSymbol();
-	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	// statements
 	compileStatements();
 	// '}'
-	if(jackTokenizer.tokenType() == SYMBOL)
-		compileSymbol();
+	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
+	compileSymbol();
 	// ('else' '{' statements '}')?
 	if(jackTokenizer.hasMoreTokens() && jackTokenizer.next() == "else") {
 		jackTokenizer.advance();
@@ -587,14 +588,15 @@ void CompilationEngine::compileWhile() {
 	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	// expression
 	compileExpression();
+	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	// ')'
 	compileSymbol();
 	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	// '}'
 	compileSymbol();
-	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	// statements
 	compileStatements();
+	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	// '}'
 	compileSymbol();
 	outFile << "</whileStatement>" << std::endl;
@@ -801,6 +803,7 @@ void CompilationEngine::compileExpressionList() {
 					compileExpression();
 					break;
 				default:
+					isExist = false;
 					break;
 			}
 			break;
@@ -811,6 +814,7 @@ void CompilationEngine::compileExpressionList() {
 					compileSymbol();
 					break;
 				default:
+					isExist = false;
 					break;
 			}
 			break;
@@ -818,7 +822,10 @@ void CompilationEngine::compileExpressionList() {
 			isExist = false;
 			break;
 	}
-	if(!isExist)	return;
+	if(!isExist) {
+		outFile << "</expressionList>" << std::endl;
+		return;
+	}
 	// (',' expression)*
 	while(jackTokenizer.hasMoreTokens() && jackTokenizer.next() == ",") {
 		jackTokenizer.advance();
@@ -826,5 +833,6 @@ void CompilationEngine::compileExpressionList() {
 		if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 		compileExpression();
 	}
+	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	outFile << "</expressionList>" << std::endl;
 }
