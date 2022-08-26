@@ -12,6 +12,12 @@ enum Kind {
 	NONE
 };
 
+// スコープ
+enum Scope {
+	CLASS,
+	SUBROUTINE
+};
+
 struct SymbolInformation {
 	// 型
 	std::string type;
@@ -22,8 +28,10 @@ struct SymbolInformation {
 };
 
 class SymbolTable {
+	Scope scope;
 	std::map<std::string, SymbolInformation> classMap;
 	std::map<std::string, SymbolInformation> subroutineMap;
+	int staticCount, fieldCount;
 	public:
 	// 空のシンボルテーブルを生成する
 	SymbolTable();
