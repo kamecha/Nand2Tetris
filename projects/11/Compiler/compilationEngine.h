@@ -1,11 +1,13 @@
 #pragma once
 
 #include "jackTokenizer.h"
+#include "symbolTable.h"
 #include <fstream>
 
 class CompilationEngine {
 	std::ofstream& outFile;
 	JackTokenizer jackTokenizer;
+	SymbolTable symbolTable;
 	public:
 	// 与えられた入力と出力に対して新しいコンパイルエンジンを生成する。
 	// 次に呼ぶルーチンはcompleClass()でなければならない

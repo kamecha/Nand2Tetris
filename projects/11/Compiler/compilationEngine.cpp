@@ -1,9 +1,10 @@
 #include "compilationEngine.h"
 #include "jackTokenizer.h"
+#include "symbolTable.h"
 #include <string>
 #include <vector>
 
-CompilationEngine::CompilationEngine(std::ifstream& inFile, std::ofstream& outFile) : jackTokenizer(inFile), outFile(outFile) {
+CompilationEngine::CompilationEngine(std::ifstream& inFile, std::ofstream& outFile) : jackTokenizer(inFile), symbolTable(), outFile(outFile) {
 	if(jackTokenizer.hasMoreTokens())
 		jackTokenizer.advance();
 }
@@ -135,6 +136,28 @@ void CompilationEngine::compileStringConstnat() {
 void CompilationEngine::compileIdentifier() {
 	switch(jackTokenizer.tokenType()) {
 		case IDENTIFIER:
+			outFile << "symbol情報" << std::endl;
+			outFile << "カテゴリ:" << std::endl;
+			outFile << "属性:";
+			switch(symbolTable.kindOf(jackTokenizer.identifier())) {
+				case STATIC:
+					outFile << "static" << std::endl;
+					break;
+				case FIELD:
+					outFile << "field" << std::endl;
+					break;
+				case ARG:
+					outFile << "arg" << std::endl;
+					break;
+				case VAR:
+					outFile << "var" << std::endl;
+					break;
+				default:
+					outFile << "登録されていないよ" << std::endl;
+					break;
+			}
+			outFile << "実行番号:";
+			outFile << symbolTable.indexOf(jackTokenizer.identifier()) << std::endl;
 			outFile << "<identifier>" << " " << jackTokenizer.identifier() << " " << "</identifier>" << std::endl;
 			break;
 		default:
@@ -186,18 +209,26 @@ void CompilationEngine::compileClass() {
 type: 'int' | 'char' | 'boolean' | className
 */
 void CompilationEngine::compileClassVarDec() {
+	// symbolTable用変数
+	std::string type;
+	Kind kind;
 	outFile << "<classVarDec>" << std::endl;
 	// ('static' | 'field')
 	switch(jackTokenizer.keyWord()) {
 		case KEY_STATIC:
+			kind = STATIC;
+			compileKeyword();
+			break;
 		case KEY_FIELD:
+			kind = FIELD;
 			compileKeyword();
 			break;
 		default:
 			break;
 	}
-	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	// type
+	type = jackTokenizer.next();
+	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	switch(jackTokenizer.tokenType()) {
 		case KEYWORD:
 			switch(jackTokenizer.keyWord()) {
@@ -216,8 +247,9 @@ void CompilationEngine::compileClassVarDec() {
 		default:
 			break;
 	}
-	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	// varName
+	symbolTable.define(jackTokenizer.next(), type, kind);
+	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	compileIdentifier();
 	// (',' varName)* ';'
 	bool isEnd = false;
@@ -232,6 +264,7 @@ void CompilationEngine::compileClassVarDec() {
 				}
 				if(jackTokenizer.symbol() == ',') {
 					outFile << "<symbol>" << " , " << "</symbol>" << std::endl;
+					symbolTable.define(jackTokenizer.next(), type, kind);
 					if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 					compileIdentifier();
 				}
@@ -424,6 +457,9 @@ void CompilationEngine::compileParameterList() {
 type: 'int' | 'char' | 'boolean' | className
 */
 void CompilationEngine::compileVarDec() {
+	// symbolTable用変数
+	std::string type;
+	Kind kind = VAR;
 	outFile << "<varDec>" << std::endl;
 	// 'var'
 	switch(jackTokenizer.tokenType()) {
@@ -434,6 +470,7 @@ void CompilationEngine::compileVarDec() {
 			break;
 	}
 	// type
+	type = jackTokenizer.next();
 	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	switch(jackTokenizer.tokenType()) {
 		case KEYWORD:
@@ -453,13 +490,15 @@ void CompilationEngine::compileVarDec() {
 		default:
 			break;
 	}
-	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	// varName
+	symbolTable.define(jackTokenizer.next(), type, kind);
+	if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 	compileIdentifier();
 	// (',' varName)*
 	while(jackTokenizer.hasMoreTokens() && jackTokenizer.next() == ",") {
 		jackTokenizer.advance();
 		compileSymbol();
+		symbolTable.define(jackTokenizer.next(), type, kind);
 		if(jackTokenizer.hasMoreTokens()) jackTokenizer.advance();
 		compileIdentifier();
 	}

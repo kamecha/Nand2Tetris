@@ -1,4 +1,5 @@
 #include "symbolTable.h"
+#include <iostream>
 #include <string>
 
 SymbolTable::SymbolTable() {
@@ -12,25 +13,42 @@ SymbolTable::SymbolTable() {
 void SymbolTable::startSubroutine() {
 	scope = SUBROUTINE;
 	subroutineMap.clear();
-	staticCount = 0;
-	fieldCount = 0;
+	argumentCount = 0;
+	variableCount = 0;
 }
 
 void SymbolTable::define(std::string name, std::string type, Kind kind) {
 	SymbolInformation symInfo;
 	symInfo.type = type;
 	symInfo.kind = kind;
-	switch(kind) {
-		case STATIC:
-			symInfo.number = staticCount++;
+	switch(scope) {
+		case CLASS:
+			switch(kind) {
+				case STATIC:
+					symInfo.number = staticCount++;
+					break;
+				case FIELD:
+					symInfo.number = fieldCount++;
+					break;
+				default:
+					break;
+			}
+			classMap[name] = symInfo;
 			break;
-		case FIELD:
-			symInfo.number = fieldCount++;
-			break;
-		default:
+		case SUBROUTINE:
+			switch(kind) {
+				case ARG:
+					symInfo.number = argumentCount++;
+					break;
+				case VAR:
+					symInfo.number = variableCount++;
+					break;
+				default:
+					break;
+			}
+			subroutineMap[name] = symInfo;
 			break;
 	}
-	subroutineMap[name] = symInfo;
 }
 
 int SymbolTable::varCount(Kind kind) {
@@ -54,7 +72,7 @@ Kind SymbolTable::kindOf(std::string name) {
 			}
 			break;
 		case SUBROUTINE:
-			if(classMap.contains(name)) {
+			if(subroutineMap.contains(name)) {
 				return subroutineMap[name].kind;
 			}
 			break;

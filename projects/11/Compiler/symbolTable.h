@@ -31,7 +31,7 @@ class SymbolTable {
 	Scope scope;
 	std::map<std::string, SymbolInformation> classMap;
 	std::map<std::string, SymbolInformation> subroutineMap;
-	int staticCount, fieldCount;
+	int staticCount, fieldCount, argumentCount, variableCount;
 	public:
 	// 空のシンボルテーブルを生成する
 	SymbolTable();
@@ -50,5 +50,5 @@ class SymbolTable {
 	std::string typeOf(std::string name);
 	// 引数で与えられた名前の識別子を現在のスコープで探し、そのインデックスを返す
 	int indexOf(std::string name);
-}
+};
 
